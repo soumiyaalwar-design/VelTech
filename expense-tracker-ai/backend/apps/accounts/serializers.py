@@ -4,6 +4,7 @@ from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth import authenticate
+from django.core.exceptions import ValidationError as DjangoValidationError
 
 from apps.accounts.models import CustomUser
 
@@ -96,8 +97,9 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         
         try:
             validate_password(value)
-        except serializers.ValidationError as e:
-            raise serializers.ValidationError(e.detail)
+        except (serializers.ValidationError, DjangoValidationError) as e:
+            msg = list(e.messages) if hasattr(e, 'messages') else [str(e)]
+            raise serializers.ValidationError(msg)
         
         return value
     
@@ -165,6 +167,15 @@ class UserLoginSerializer(serializers.Serializer):
         
         # Try to authenticate
         user = authenticate(username=email, password=password)
+        if not user:
+            user = authenticate(email=email, password=password)
+        if not user:
+            try:
+                candidate = CustomUser.objects.get(email__iexact=email)
+                if candidate.check_password(password):
+                    user = candidate
+            except CustomUser.DoesNotExist:
+                pass
         
         if not user:
             raise serializers.ValidationError('Invalid email or password.')
