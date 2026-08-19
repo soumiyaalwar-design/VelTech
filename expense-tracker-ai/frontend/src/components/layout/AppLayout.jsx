@@ -29,15 +29,56 @@ export const AppLayout = () => {
   };
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: 'var(--bg-primary)' }}>
+    <div className="app-canvas" style={{ display: 'flex', minHeight: '100vh', position: 'relative', overflow: 'hidden' }}>
+      {/* Subtle Atmospheric Ambient Glow Lights (Fixed background elements) */}
+      <div
+        aria-hidden="true"
+        style={{
+          position: 'fixed',
+          top: '-15%',
+          right: '-5%',
+          width: '600px',
+          height: '600px',
+          borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(16, 185, 129, 0.07) 0%, rgba(16, 185, 129, 0) 70%)',
+          pointerEvents: 'none',
+          zIndex: 0,
+        }}
+      />
+      <div
+        aria-hidden="true"
+        style={{
+          position: 'fixed',
+          bottom: '-10%',
+          left: '10%',
+          width: '700px',
+          height: '700px',
+          borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(99, 102, 241, 0.08) 0%, rgba(99, 102, 241, 0) 70%)',
+          pointerEvents: 'none',
+          zIndex: 0,
+        }}
+      />
+
       <Sidebar isCollapsed={isCollapsed} onToggle={() => setIsCollapsed(!isCollapsed)} />
 
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, height: '100vh', overflowY: 'auto' }}>
+      <div
+        style={{
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          minWidth: 0,
+          height: '100vh',
+          overflowY: 'auto',
+          position: 'relative',
+          zIndex: 1,
+        }}
+      >
         <Topbar
           pageTitle={getPageTitle(location.pathname)}
           onToggleSidebar={() => setIsCollapsed(!isCollapsed)}
         />
-        <main style={{ flex: 1, padding: '28px' }}>
+        <main style={{ flex: 1, padding: '32px 28px', maxWidth: '1600px', width: '100%', margin: '0 auto' }}>
           <Outlet />
         </main>
       </div>

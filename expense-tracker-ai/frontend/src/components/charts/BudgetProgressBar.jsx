@@ -1,5 +1,6 @@
 import React from 'react';
 import { formatCurrency } from '../../utils/currency';
+import { CheckCircle2, AlertTriangle, AlertCircle } from 'lucide-react';
 
 export const BudgetProgressBar = ({
   category,
@@ -23,41 +24,62 @@ export const BudgetProgressBar = ({
     return 'rgba(16, 185, 129, 0.15)';
   };
 
+  const getStatusBorder = () => {
+    if (isOver) return 'rgba(239, 68, 68, 0.3)';
+    if (isWarning) return 'rgba(245, 158, 11, 0.3)';
+    return 'rgba(16, 185, 129, 0.3)';
+  };
+
   return (
-    <div style={{ marginBottom: '16px' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-primary)' }}>
+    <div
+      style={{
+        padding: '14px 16px',
+        backgroundColor: 'rgba(255, 255, 255, 0.02)',
+        border: '1px solid var(--border-glass)',
+        borderRadius: 'var(--radius-md)',
+        marginBottom: '12px',
+        transition: 'border-color 0.2s ease',
+      }}
+    >
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <span style={{ fontSize: '0.875rem', fontWeight: 700, color: 'var(--text-primary)' }}>
             {category}
           </span>
           <span
             style={{
               fontSize: '0.6875rem',
               fontWeight: 700,
-              padding: '2px 6px',
+              padding: '2px 8px',
               borderRadius: 'var(--radius-full)',
               color: getStatusColor(),
               backgroundColor: getStatusBg(),
+              border: `1px solid ${getStatusBorder()}`,
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '4px',
             }}
           >
+            {isOver ? <AlertCircle size={10} /> : isWarning ? <AlertTriangle size={10} /> : <CheckCircle2 size={10} />}
             {usagePercentage}%
           </span>
         </div>
 
-        <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
-          <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{formatCurrency(spentAmount)}</span>
+        <div style={{ fontSize: '0.75rem' }}>
+          <span style={{ fontWeight: 700, color: 'var(--text-primary)' }}>{formatCurrency(spentAmount)}</span>
           <span style={{ color: 'var(--text-muted)' }}> / {formatCurrency(budgetAmount)}</span>
         </div>
       </div>
 
-      {/* Progress Bar Container */}
+      {/* Progress Track */}
       <div
         style={{
           width: '100%',
-          height: '8px',
-          backgroundColor: '#0E1626',
+          height: '7px',
+          backgroundColor: 'rgba(255, 255, 255, 0.06)',
           borderRadius: 'var(--radius-full)',
           overflow: 'hidden',
+          boxShadow: 'inset 0 1px 2px rgba(0, 0, 0, 0.4)',
         }}
       >
         <div
@@ -66,7 +88,8 @@ export const BudgetProgressBar = ({
             width: `${Math.min(usagePercentage, 100)}%`,
             backgroundColor: getStatusColor(),
             borderRadius: 'var(--radius-full)',
-            transition: 'width 0.4s ease',
+            boxShadow: `0 0 8px ${getStatusColor()}60`,
+            transition: 'width 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
           }}
         />
       </div>

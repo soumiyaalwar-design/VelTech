@@ -39,48 +39,51 @@ export const Sidebar = ({ isCollapsed, onToggle }) => {
   return (
     <aside
       style={{
-        width: isCollapsed ? '72px' : '260px',
-        backgroundColor: '#0A0F1D',
-        borderRight: '1px solid var(--border-subtle)',
+        width: isCollapsed ? '76px' : '264px',
+        backgroundColor: 'rgba(8, 13, 26, 0.88)',
+        backdropFilter: 'blur(24px) saturate(190%)',
+        WebkitBackdropFilter: 'blur(24px) saturate(190%)',
+        borderRight: '1px solid var(--border-glass)',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
-        transition: 'width 0.25s ease',
+        transition: 'width 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
         position: 'relative',
-        zIndex: 10,
+        zIndex: 20,
         height: '100vh',
+        boxShadow: '4px 0 24px 0 rgba(0, 0, 0, 0.35)',
       }}
     >
-      {/* Brand & Logo */}
+      {/* Brand & Header */}
       <div>
         <div
           style={{
-            height: '70px',
+            height: '72px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: isCollapsed ? 'center' : 'space-between',
-            padding: '0 20px',
-            borderBottom: '1px solid var(--border-subtle)',
+            padding: isCollapsed ? '0 12px' : '0 20px',
+            borderBottom: '1px solid var(--border-glass)',
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', overflow: 'hidden' }}>
             <div
               style={{
-                width: '36px',
-                height: '36px',
-                minWidth: '36px',
-                borderRadius: '10px',
+                width: '38px',
+                height: '38px',
+                minWidth: '38px',
+                borderRadius: '11px',
                 background: 'linear-gradient(135deg, #10B981 0%, #6366F1 100%)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                boxShadow: '0 4px 12px rgba(16, 185, 129, 0.3)',
+                boxShadow: '0 4px 16px rgba(16, 185, 129, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.3)',
               }}
             >
               <Sparkles size={20} color="#FFFFFF" />
             </div>
             {!isCollapsed && (
-              <span style={{ fontSize: '1.125rem', fontWeight: 800, color: '#FFFFFF', letterSpacing: '-0.02em', whiteSpace: 'nowrap' }}>
+              <span style={{ fontSize: '1.125rem', fontWeight: 800, color: '#FFFFFF', letterSpacing: '-0.025em', whiteSpace: 'nowrap' }}>
                 Expense<span style={{ color: 'var(--emerald)' }}>Tracker</span>
               </span>
             )}
@@ -88,22 +91,24 @@ export const Sidebar = ({ isCollapsed, onToggle }) => {
 
           <button
             onClick={onToggle}
+            aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
             style={{
-              background: 'transparent',
-              border: 'none',
-              color: 'var(--text-muted)',
+              background: 'rgba(255, 255, 255, 0.04)',
+              border: '1px solid var(--border-glass)',
+              color: 'var(--text-secondary)',
               cursor: 'pointer',
               display: isCollapsed ? 'none' : 'flex',
-              padding: '4px',
+              padding: '6px',
               borderRadius: 'var(--radius-sm)',
+              transition: 'all 0.2s ease',
             }}
           >
-            <ChevronLeft size={18} />
+            <ChevronLeft size={16} />
           </button>
         </div>
 
         {/* Navigation Items */}
-        <nav style={{ padding: '16px 12px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+        <nav style={{ padding: '18px 12px', display: 'flex', flexDirection: 'column', gap: '5px' }}>
           {navItems.map((item) => (
             <NavLink
               key={item.name}
@@ -113,26 +118,35 @@ export const Sidebar = ({ isCollapsed, onToggle }) => {
                 display: 'flex',
                 alignItems: 'center',
                 gap: '14px',
-                padding: '10px 14px',
+                padding: isCollapsed ? '12px 0' : '11px 16px',
+                justifyContent: isCollapsed ? 'center' : 'flex-start',
                 borderRadius: 'var(--radius-md)',
                 color: isActive ? '#FFFFFF' : 'var(--text-secondary)',
-                backgroundColor: isActive ? 'rgba(99, 102, 241, 0.12)' : 'transparent',
-                border: isActive ? '1px solid rgba(99, 102, 241, 0.3)' : '1px solid transparent',
+                background: isActive
+                  ? 'linear-gradient(90deg, rgba(99, 102, 241, 0.18) 0%, rgba(99, 102, 241, 0.04) 100%)'
+                  : 'transparent',
+                border: isActive
+                  ? '1px solid rgba(99, 102, 241, 0.32)'
+                  : '1px solid transparent',
+                borderLeft: isActive
+                  ? '3px solid var(--indigo)'
+                  : '1px solid transparent',
                 textDecoration: 'none',
-                fontWeight: isActive ? 600 : 500,
+                fontWeight: isActive ? 700 : 500,
                 fontSize: '0.875rem',
-                transition: 'all 0.15s ease',
+                transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
+                boxShadow: isActive ? '0 4px 16px rgba(0, 0, 0, 0.25)' : 'none',
               })}
             >
-              <item.icon size={20} style={{ minWidth: '20px' }} />
+              <item.icon size={20} style={{ minWidth: '20px', color: item.path === '/' ? 'inherit' : 'inherit' }} />
               {!isCollapsed && <span>{item.name}</span>}
             </NavLink>
           ))}
         </nav>
       </div>
 
-      {/* User Profile & Logout */}
-      <div style={{ padding: '16px 12px', borderTop: '1px solid var(--border-subtle)' }}>
+      {/* User Profile & Logout Bottom Card */}
+      <div style={{ padding: '16px 12px', borderTop: '1px solid var(--border-glass)' }}>
         <NavLink
           to="/profile"
           title={isCollapsed ? 'Profile' : ''}
@@ -140,37 +154,56 @@ export const Sidebar = ({ isCollapsed, onToggle }) => {
             display: 'flex',
             alignItems: 'center',
             gap: '12px',
-            padding: '10px 12px',
+            padding: isCollapsed ? '10px 0' : '10px 12px',
+            justifyContent: isCollapsed ? 'center' : 'flex-start',
             borderRadius: 'var(--radius-md)',
             color: isActive ? '#FFFFFF' : 'var(--text-secondary)',
-            backgroundColor: isActive ? 'rgba(255, 255, 255, 0.05)' : 'transparent',
+            backgroundColor: isActive ? 'rgba(255, 255, 255, 0.08)' : 'rgba(255, 255, 255, 0.03)',
+            border: '1px solid var(--border-glass)',
             textDecoration: 'none',
             fontSize: '0.875rem',
-            marginBottom: '6px',
+            marginBottom: '8px',
             overflow: 'hidden',
+            transition: 'all 0.2s ease',
           })}
         >
-          <div
-            style={{
-              width: '32px',
-              height: '32px',
-              minWidth: '32px',
-              borderRadius: '50%',
-              backgroundColor: '#1E293B',
-              border: '1px solid #334155',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontWeight: 700,
-              fontSize: '0.75rem',
-              color: '#38BDF8',
-            }}
-          >
-            {user?.first_name ? user.first_name[0].toUpperCase() : 'U'}
+          <div style={{ position: 'relative' }}>
+            <div
+              style={{
+                width: '34px',
+                height: '34px',
+                minWidth: '34px',
+                borderRadius: '50%',
+                backgroundColor: 'rgba(99, 102, 241, 0.2)',
+                border: '1px solid rgba(99, 102, 241, 0.4)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontWeight: 700,
+                fontSize: '0.8125rem',
+                color: '#818CF8',
+              }}
+            >
+              {user?.first_name ? user.first_name[0].toUpperCase() : 'U'}
+            </div>
+            {/* Online Status Dot */}
+            <span
+              style={{
+                position: 'absolute',
+                bottom: '0',
+                right: '0',
+                width: '8px',
+                height: '8px',
+                borderRadius: '50%',
+                backgroundColor: 'var(--emerald)',
+                border: '2px solid #080D1A',
+              }}
+            />
           </div>
+
           {!isCollapsed && (
             <div style={{ overflow: 'hidden' }}>
-              <div style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: '0.8125rem', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>
+              <div style={{ fontWeight: 700, color: 'var(--text-primary)', fontSize: '0.8125rem', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>
                 {user?.first_name ? `${user.first_name} ${user.last_name || ''}` : 'My Account'}
               </div>
               <div style={{ fontSize: '0.6875rem', color: 'var(--text-muted)', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>
@@ -188,7 +221,8 @@ export const Sidebar = ({ isCollapsed, onToggle }) => {
             display: 'flex',
             alignItems: 'center',
             gap: '12px',
-            padding: '10px 12px',
+            padding: isCollapsed ? '10px 0' : '10px 12px',
+            justifyContent: isCollapsed ? 'center' : 'flex-start',
             borderRadius: 'var(--radius-md)',
             background: 'transparent',
             border: 'none',
@@ -196,6 +230,7 @@ export const Sidebar = ({ isCollapsed, onToggle }) => {
             cursor: 'pointer',
             fontSize: '0.875rem',
             fontWeight: 600,
+            transition: 'background-color 0.2s ease',
           }}
         >
           <LogOut size={18} style={{ minWidth: '18px' }} />
