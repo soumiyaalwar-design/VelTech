@@ -193,11 +193,11 @@ export const Income = () => {
       {/* Top Header */}
       <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
         <div>
-          <h2 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.02em', marginBottom: '4px' }}>
-            Income
+          <h2 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.025em', marginBottom: '4px' }}>
+            Income Tracking
           </h2>
           <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
-            Track your paychecks, freelancing, investments, and revenue streams.
+            Record salary, freelance deposits, investment returns, and revenue sources.
           </p>
         </div>
 
@@ -209,39 +209,39 @@ export const Income = () => {
 
       {/* Summary KPI Mini Cards */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
-        <div className="glass-card" style={{ padding: '16px 20px' }}>
-          <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: '4px' }}>Total Filtered Income</div>
-          <div style={{ fontSize: '1.375rem', fontWeight: 800, color: 'var(--emerald)' }}>{formatCurrency(totalAmount)}</div>
+        <div className="glass-card" style={{ padding: '18px 22px' }}>
+          <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: '6px' }}>Total Filtered Income</div>
+          <div style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-emerald)', letterSpacing: '-0.02em' }}>{formatCurrency(totalAmount)}</div>
         </div>
-        <div className="glass-card" style={{ padding: '16px 20px' }}>
-          <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: '4px' }}>Income Transactions</div>
-          <div style={{ fontSize: '1.375rem', fontWeight: 800, color: 'var(--text-primary)' }}>{incomes.length}</div>
+        <div className="glass-card" style={{ padding: '18px 22px' }}>
+          <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: '6px' }}>Deposits Count</div>
+          <div style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>{incomes.length}</div>
         </div>
-        <div className="glass-card" style={{ padding: '16px 20px' }}>
-          <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: '4px' }}>Average Deposit</div>
-          <div style={{ fontSize: '1.375rem', fontWeight: 800, color: '#38BDF8' }}>{formatCurrency(avgAmount)}</div>
+        <div className="glass-card" style={{ padding: '18px 22px' }}>
+          <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: '6px' }}>Average Deposit</div>
+          <div style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-cyan)', letterSpacing: '-0.02em' }}>{formatCurrency(avgAmount)}</div>
         </div>
       </div>
 
       {/* Filter Toolbar */}
       <div className="glass-card" style={{ padding: '16px 20px', display: 'flex', flexWrap: 'wrap', gap: '12px', alignItems: 'center' }}>
-        <div style={{ flex: '1 1 200px', position: 'relative' }}>
+        <div style={{ flex: '1 1 220px', position: 'relative' }}>
           <input
             type="text"
             className="form-input"
             placeholder="Search description..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            style={{ paddingLeft: '36px' }}
+            style={{ paddingLeft: '38px' }}
           />
-          <Search size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+          <Search size={16} style={{ position: 'absolute', left: '13px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
         </div>
 
         <select
           className="form-select"
           value={selectedCategory}
           onChange={(e) => setSelectedCategory(e.target.value)}
-          style={{ flex: '1 1 150px' }}
+          style={{ flex: '1 1 160px' }}
         >
           <option value="">All Categories</option>
           {categories.map((c) => (
@@ -253,7 +253,7 @@ export const Income = () => {
           className="form-select"
           value={selectedPaymentMethod}
           onChange={(e) => setSelectedPaymentMethod(e.target.value)}
-          style={{ flex: '1 1 150px' }}
+          style={{ flex: '1 1 160px' }}
         >
           <option value="">All Payment Methods</option>
           <option value="BANK_TRANSFER">Bank Transfer</option>
@@ -268,7 +268,7 @@ export const Income = () => {
           className="form-input"
           value={startDate}
           onChange={(e) => setStartDate(e.target.value)}
-          style={{ flex: '1 1 130px' }}
+          style={{ flex: '1 1 140px' }}
           placeholder="Start Date"
         />
 
@@ -277,7 +277,7 @@ export const Income = () => {
           className="form-input"
           value={endDate}
           onChange={(e) => setEndDate(e.target.value)}
-          style={{ flex: '1 1 130px' }}
+          style={{ flex: '1 1 140px' }}
           placeholder="End Date"
         />
       </div>
@@ -290,7 +290,7 @@ export const Income = () => {
           <EmptyState
             icon={ArrowUpCircle}
             title="No income records found"
-            description="You haven't recorded any income matching the current filters."
+            description="You haven't recorded any income entries matching the current filters."
             actionText="Record First Income"
             onAction={handleOpenAdd}
           />
@@ -318,9 +318,9 @@ export const Income = () => {
                     <span
                       className="badge"
                       style={{
-                        backgroundColor: `${inc.category?.color || '#10B981'}20`,
+                        backgroundColor: `${inc.category?.color || '#10B981'}18`,
                         color: inc.category?.color || '#10B981',
-                        border: `1px solid ${inc.category?.color || '#10B981'}40`,
+                        border: `1px solid ${inc.category?.color || '#10B981'}35`,
                       }}
                     >
                       <Tag size={12} />
@@ -329,29 +329,31 @@ export const Income = () => {
                   </td>
                   <td>{inc.description || '—'}</td>
                   <td>
-                    <span className="badge badge-income">
+                    <span className="badge badge-neutral">
                       <CreditCard size={12} />
                       {inc.payment_method}
                     </span>
                   </td>
-                  <td style={{ fontWeight: 700, color: 'var(--emerald)' }}>
+                  <td style={{ fontWeight: 700, color: 'var(--text-emerald)', letterSpacing: '-0.01em' }}>
                     +{formatCurrency(inc.amount)}
                   </td>
                   <td style={{ textAlign: 'right' }}>
                     <div style={{ display: 'inline-flex', gap: '8px' }}>
                       <button
                         className="btn btn-outline"
-                        style={{ padding: '6px' }}
+                        style={{ padding: '6px 8px' }}
                         onClick={() => handleOpenEdit(inc)}
                         title="Edit Income"
+                        aria-label="Edit Income"
                       >
                         <Edit2 size={14} />
                       </button>
                       <button
                         className="btn btn-danger"
-                        style={{ padding: '6px' }}
+                        style={{ padding: '6px 8px' }}
                         onClick={() => handleOpenDelete(inc)}
                         title="Delete Income"
+                        aria-label="Delete Income"
                       >
                         <Trash2 size={14} />
                       </button>
@@ -415,9 +417,9 @@ export const Income = () => {
               value={formData.payment_method}
               onChange={(e) => setFormData({ ...formData, payment_method: e.target.value })}
             >
-              <option value="BANK_TRANSFER">Bank Transfer / Direct Deposit</option>
+              <option value="BANK_TRANSFER">Bank Transfer</option>
               <option value="UPI">UPI</option>
-              <option value="CARD">Card</option>
+              <option value="CARD">Credit / Debit Card</option>
               <option value="CASH">Cash</option>
               <option value="OTHER">Other</option>
             </select>
@@ -428,7 +430,7 @@ export const Income = () => {
             <input
               type="text"
               className="form-input"
-              placeholder="e.g. Monthly Salary, Freelance Invoice #102"
+              placeholder="e.g. Monthly Salary, Freelance project"
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
             />
@@ -439,7 +441,7 @@ export const Income = () => {
             <textarea
               className="form-textarea"
               rows={2}
-              placeholder="Add client or invoice remarks"
+              placeholder="Tax deduction or bonus remarks"
               value={formData.notes}
               onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
             />
@@ -450,7 +452,7 @@ export const Income = () => {
               Cancel
             </button>
             <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
-              {isSubmitting ? 'Saving...' : 'Save Income'}
+              {isSubmitting ? 'Saving...' : 'Record Income'}
             </button>
           </div>
         </form>
@@ -506,9 +508,9 @@ export const Income = () => {
               value={formData.payment_method}
               onChange={(e) => setFormData({ ...formData, payment_method: e.target.value })}
             >
-              <option value="BANK_TRANSFER">Bank Transfer / Direct Deposit</option>
+              <option value="BANK_TRANSFER">Bank Transfer</option>
               <option value="UPI">UPI</option>
-              <option value="CARD">Card</option>
+              <option value="CARD">Credit / Debit Card</option>
               <option value="CASH">Cash</option>
               <option value="OTHER">Other</option>
             </select>
@@ -525,7 +527,7 @@ export const Income = () => {
           </div>
 
           <div className="form-group">
-            <label className="form-label">Notes</label>
+            <label className="form-label">Notes (Optional)</label>
             <textarea
               className="form-textarea"
               rows={2}
@@ -545,13 +547,14 @@ export const Income = () => {
         </form>
       </Modal>
 
-      {/* Delete Income Confirmation */}
+      {/* Delete Confirmation Modal */}
       <ConfirmModal
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
         onConfirm={handleDeleteConfirm}
-        title="Delete Income Entry"
-        message={`Are you sure you want to delete the income of ${currentIncome ? formatCurrency(currentIncome.amount) : ''}?`}
+        title="Delete Income Record"
+        message={`Are you sure you want to permanently delete the income entry of ${formatCurrency(currentIncome?.amount || 0)} for "${currentIncome?.description || currentIncome?.category?.name}"?`}
+        confirmText="Delete Record"
         isLoading={isSubmitting}
       />
     </div>

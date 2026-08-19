@@ -31,57 +31,68 @@ export const ToastProvider = ({ children }) => {
   return (
     <ToastContext.Provider value={toast}>
       {children}
-      {/* Toast Container */}
-      <div style={{
-        position: 'fixed',
-        bottom: '24px',
-        right: '24px',
-        zIndex: 9999,
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '10px',
-        maxWidth: '380px',
-        width: '100%',
-        pointerEvents: 'none'
-      }}>
+      {/* Toast Notification Container */}
+      <div
+        style={{
+          position: 'fixed',
+          bottom: '24px',
+          right: '24px',
+          zIndex: 9999,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '10px',
+          maxWidth: '400px',
+          width: '100%',
+          pointerEvents: 'none',
+        }}
+      >
         {toasts.map((t) => (
           <div
             key={t.id}
             className="glass-card animate-fade-in"
             style={{
-              padding: '12px 16px',
+              padding: '14px 18px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
               gap: '12px',
               pointerEvents: 'auto',
               borderLeft: `4px solid ${
-                t.type === 'success' ? '#10B981' :
-                t.type === 'error' ? '#EF4444' :
-                t.type === 'warning' ? '#F59E0B' : '#38BDF8'
+                t.type === 'success'
+                  ? 'var(--emerald)'
+                  : t.type === 'error'
+                  ? 'var(--rose)'
+                  : t.type === 'warning'
+                  ? 'var(--amber)'
+                  : 'var(--cyan)'
               }`,
-              background: '#0E172A',
-              boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.6)'
+              background: 'var(--bg-surface)',
+              boxShadow: 'var(--shadow-glass-lg)',
+              borderTop: '1px solid var(--border-glass)',
+              borderRight: '1px solid var(--border-glass)',
+              borderBottom: '1px solid var(--border-glass)',
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              {t.type === 'success' && <CheckCircle2 size={18} color="#10B981" />}
-              {t.type === 'error' && <AlertCircle size={18} color="#EF4444" />}
-              {t.type === 'warning' && <AlertTriangle size={18} color="#F59E0B" />}
-              {t.type === 'info' && <Info size={18} color="#38BDF8" />}
-              <span style={{ fontSize: '0.875rem', fontWeight: 500, color: '#F8FAFC' }}>
+              {t.type === 'success' && <CheckCircle2 size={18} color="var(--emerald)" />}
+              {t.type === 'error' && <AlertCircle size={18} color="var(--rose)" />}
+              {t.type === 'warning' && <AlertTriangle size={18} color="var(--amber)" />}
+              {t.type === 'info' && <Info size={18} color="var(--cyan)" />}
+              <span style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-primary)' }}>
                 {t.message}
               </span>
             </div>
             <button
               onClick={() => removeToast(t.id)}
+              aria-label="Dismiss toast"
               style={{
                 background: 'transparent',
                 border: 'none',
-                color: '#94A3B8',
+                color: 'var(--text-muted)',
                 cursor: 'pointer',
-                padding: '2px',
-                display: 'flex'
+                padding: '4px',
+                display: 'flex',
+                borderRadius: 'var(--radius-xs)',
               }}
             >
               <X size={14} />

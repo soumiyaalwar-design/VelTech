@@ -109,17 +109,18 @@ export const Reports = () => {
 
   return (
     <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-      {/* Top Header & Export Buttons */}
+      {/* Top Header */}
       <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
         <div>
-          <h2 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.02em', marginBottom: '4px' }}>
-            Financial Reports
+          <h2 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.025em', marginBottom: '4px' }}>
+            Financial Reports & Export
           </h2>
           <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
-            Consolidated statement of income, expenses, net savings, and structured workbook exports.
+            Filter consolidated cashflow statements and generate styled CSV or native Excel spreadsheets.
           </p>
         </div>
 
+        {/* Export Buttons */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <button
             type="button"
@@ -138,13 +139,13 @@ export const Reports = () => {
             disabled={isExportingExcel}
           >
             <FileSpreadsheet size={16} />
-            {isExportingExcel ? 'Building Excel...' : 'Export Excel'}
+            {isExportingExcel ? 'Generating Excel...' : 'Export Excel (.xlsx)'}
           </button>
         </div>
       </div>
 
-      {/* Filter Bar */}
-      <div className="glass-card" style={{ padding: '16px 20px', display: 'flex', flexWrap: 'wrap', gap: '12px', alignItems: 'center' }}>
+      {/* Filter Controls */}
+      <div className="glass-card" style={{ padding: '18px 22px', display: 'flex', flexWrap: 'wrap', gap: '12px', alignItems: 'center' }}>
         <select
           className="form-select"
           value={selectedMonth}
@@ -175,9 +176,9 @@ export const Reports = () => {
           onChange={(e) => setSelectedType(e.target.value)}
           style={{ flex: '1 1 150px' }}
         >
-          <option value="">All Transaction Types</option>
+          <option value="">All Types (Income & Expenses)</option>
           <option value="INCOME">Income Only</option>
-          <option value="EXPENSE">Expense Only</option>
+          <option value="EXPENSE">Expenses Only</option>
         </select>
 
         <select
@@ -193,66 +194,65 @@ export const Reports = () => {
         </select>
       </div>
 
-      {/* Report KPI Metrics */}
+      {/* Metrics Summary Cards */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
-        <div className="glass-card" style={{ padding: '18px 20px' }}>
+        <div className="glass-card" style={{ padding: '18px 22px' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-            <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)' }}>Total Income</span>
-            <div style={{ padding: '6px', borderRadius: '8px', background: 'var(--emerald-bg)', color: 'var(--emerald)' }}>
-              <TrendingUp size={16} />
-            </div>
+            <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)' }}>Filtered Income</span>
+            <TrendingUp size={18} color="var(--emerald)" />
           </div>
-          <div style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--emerald)' }}>
-            {formatCurrency(reportData?.total_income || '0.00')}
+          <div style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-emerald)', letterSpacing: '-0.02em' }}>
+            {formatCurrency(reportData?.total_income || 0)}
           </div>
         </div>
 
-        <div className="glass-card" style={{ padding: '18px 20px' }}>
+        <div className="glass-card" style={{ padding: '18px 22px' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-            <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)' }}>Total Expense</span>
-            <div style={{ padding: '6px', borderRadius: '8px', background: 'var(--rose-bg)', color: 'var(--rose)' }}>
-              <TrendingDown size={16} />
-            </div>
+            <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)' }}>Filtered Expense</span>
+            <TrendingDown size={18} color="var(--rose)" />
           </div>
-          <div style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--rose)' }}>
-            {formatCurrency(reportData?.total_expense || '0.00')}
+          <div style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-rose)', letterSpacing: '-0.02em' }}>
+            {formatCurrency(reportData?.total_expense || 0)}
           </div>
         </div>
 
-        <div className="glass-card" style={{ padding: '18px 20px' }}>
+        <div className="glass-card" style={{ padding: '18px 22px' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-            <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)' }}>Net Balance</span>
-            <div style={{ padding: '6px', borderRadius: '8px', background: 'rgba(56, 189, 248, 0.15)', color: '#38BDF8' }}>
-              <Wallet size={16} />
-            </div>
+            <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)' }}>Net Period Savings</span>
+            <Wallet size={18} color="var(--cyan)" />
           </div>
-          <div style={{ fontSize: '1.5rem', fontWeight: 800, color: Number(reportData?.net_balance) >= 0 ? '#38BDF8' : 'var(--rose)' }}>
-            {formatCurrency(reportData?.net_balance || '0.00')}
+          <div
+            style={{
+              fontSize: '1.5rem',
+              fontWeight: 800,
+              color: Number(reportData?.net_savings || 0) >= 0 ? 'var(--text-emerald)' : 'var(--text-rose)',
+              letterSpacing: '-0.02em',
+            }}
+          >
+            {formatCurrency(reportData?.net_savings || 0)}
           </div>
         </div>
 
-        <div className="glass-card" style={{ padding: '18px 20px' }}>
+        <div className="glass-card" style={{ padding: '18px 22px' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-            <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)' }}>Total Records</span>
-            <div style={{ padding: '6px', borderRadius: '8px', background: 'rgba(99, 102, 241, 0.15)', color: 'var(--indigo)' }}>
-              <Calendar size={16} />
-            </div>
+            <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)' }}>Total Transactions</span>
+            <FileText size={18} color="var(--text-secondary)" />
           </div>
-          <div style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-primary)' }}>
-            {reportData?.count || 0}
+          <div style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>
+            {reportData?.transaction_count || 0} entries
           </div>
         </div>
       </div>
 
-      {/* Transactions Table */}
+      {/* Transactions Summary Table */}
       {isLoading ? (
         <SkeletonTable rows={8} />
       ) : !reportData?.transactions || reportData.transactions.length === 0 ? (
         <div className="glass-card">
           <EmptyState
-            icon={FileText}
-            title="No records matching report filters"
-            description="Adjust your month, year, or category selection to view transactions."
+            icon={FileSpreadsheet}
+            title="No report entries found"
+            description="Try modifying your month, year, type, or category filters."
           />
         </div>
       ) : (
@@ -265,7 +265,7 @@ export const Reports = () => {
                 <th>Category</th>
                 <th>Description</th>
                 <th>Payment Method</th>
-                <th style={{ textAlign: 'right' }}>Amount</th>
+                <th>Amount (INR)</th>
               </tr>
             </thead>
             <tbody>
@@ -279,7 +279,11 @@ export const Reports = () => {
                       {tx.type}
                     </span>
                   </td>
-                  <td>{tx.category}</td>
+                  <td>
+                    <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>
+                      {tx.category}
+                    </span>
+                  </td>
                   <td>{tx.description || '—'}</td>
                   <td>
                     <span className="badge badge-neutral">
@@ -289,9 +293,9 @@ export const Reports = () => {
                   </td>
                   <td
                     style={{
-                      textAlign: 'right',
                       fontWeight: 700,
-                      color: tx.type === 'INCOME' ? 'var(--emerald)' : 'var(--rose)',
+                      color: tx.type === 'INCOME' ? 'var(--text-emerald)' : 'var(--text-rose)',
+                      letterSpacing: '-0.01em',
                     }}
                   >
                     {tx.type === 'INCOME' ? '+' : '-'} {formatCurrency(tx.amount)}

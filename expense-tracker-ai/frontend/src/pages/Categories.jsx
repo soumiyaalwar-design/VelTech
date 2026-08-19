@@ -116,6 +116,7 @@ export const Categories = () => {
     try {
       await categoryService.updateCategory(currentCategory.id, {
         name: formData.name.trim(),
+        type: formData.type,
         color: formData.color,
         icon: formData.icon,
         description: formData.description.trim(),
@@ -135,11 +136,11 @@ export const Categories = () => {
     setIsSubmitting(true);
     try {
       await categoryService.deleteCategory(currentCategory.id);
-      toast.success('Category removed successfully');
+      toast.success('Category deleted successfully');
       setIsDeleteModalOpen(false);
       fetchCategories();
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Cannot delete category in use');
+      toast.error(err.response?.data?.message || 'Failed to delete category');
     } finally {
       setIsSubmitting(false);
     }
@@ -152,61 +153,74 @@ export const Categories = () => {
       {/* Top Header */}
       <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
         <div>
-          <h2 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.02em', marginBottom: '4px' }}>
-            Categories
+          <h2 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.025em', marginBottom: '4px' }}>
+            Category Configuration
           </h2>
           <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
-            Organize expenses and income with system presets and custom categories.
+            Organize transactions with system defaults and custom personalized category tags.
           </p>
         </div>
 
         <button type="button" className="btn btn-primary" onClick={handleOpenAdd}>
           <Plus size={18} />
-          New Category
+          Create Category
         </button>
       </div>
 
       {/* Tabs */}
-      <div style={{ display: 'flex', gap: '10px', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '12px' }}>
+      <div style={{ display: 'flex', gap: '12px', borderBottom: '1px solid var(--border-glass)', paddingBottom: '12px' }}>
         <button
-          className="btn"
-          style={{
-            backgroundColor: activeTab === 'EXPENSE' ? 'rgba(239, 68, 68, 0.15)' : 'transparent',
-            color: activeTab === 'EXPENSE' ? '#F87171' : 'var(--text-secondary)',
-            border: activeTab === 'EXPENSE' ? '1px solid rgba(239, 68, 68, 0.3)' : '1px solid transparent',
-          }}
+          type="button"
           onClick={() => setActiveTab('EXPENSE')}
+          style={{
+            padding: '8px 20px',
+            borderRadius: 'var(--radius-full)',
+            border: 'none',
+            cursor: 'pointer',
+            fontSize: '0.875rem',
+            fontWeight: 700,
+            transition: 'all 0.2s ease',
+            backgroundColor: activeTab === 'EXPENSE' ? 'var(--rose)' : 'var(--bg-surface)',
+            color: activeTab === 'EXPENSE' ? '#FFFFFF' : 'var(--text-secondary)',
+            boxShadow: activeTab === 'EXPENSE' ? 'var(--shadow-glass-sm)' : 'none',
+          }}
         >
           Expense Categories ({categories.filter((c) => c.type === 'EXPENSE').length})
         </button>
-
         <button
-          className="btn"
-          style={{
-            backgroundColor: activeTab === 'INCOME' ? 'rgba(16, 185, 129, 0.15)' : 'transparent',
-            color: activeTab === 'INCOME' ? '#34D399' : 'var(--text-secondary)',
-            border: activeTab === 'INCOME' ? '1px solid rgba(16, 185, 129, 0.3)' : '1px solid transparent',
-          }}
+          type="button"
           onClick={() => setActiveTab('INCOME')}
+          style={{
+            padding: '8px 20px',
+            borderRadius: 'var(--radius-full)',
+            border: 'none',
+            cursor: 'pointer',
+            fontSize: '0.875rem',
+            fontWeight: 700,
+            transition: 'all 0.2s ease',
+            backgroundColor: activeTab === 'INCOME' ? 'var(--emerald)' : 'var(--bg-surface)',
+            color: activeTab === 'INCOME' ? '#FFFFFF' : 'var(--text-secondary)',
+            boxShadow: activeTab === 'INCOME' ? 'var(--shadow-glass-sm)' : 'none',
+          }}
         >
           Income Categories ({categories.filter((c) => c.type === 'INCOME').length})
         </button>
       </div>
 
-      {/* Categories Grid */}
+      {/* Category Grid */}
       {isLoading ? (
         <div className="grid-cols-3">
-          <SkeletonCard />
-          <SkeletonCard />
-          <SkeletonCard />
+          <SkeletonCard height="130px" />
+          <SkeletonCard height="130px" />
+          <SkeletonCard height="130px" />
         </div>
       ) : filteredCategories.length === 0 ? (
         <div className="glass-card">
           <EmptyState
             icon={Tags}
-            title={`No ${activeTab.toLowerCase()} categories found`}
-            description="Add your first category to start organizing your transactions."
-            actionText="Add Category"
+            title={`No ${activeTab.toLowerCase()} categories`}
+            description="Create your first custom category to tag transactions."
+            actionText="Create Category"
             onAction={handleOpenAdd}
           />
         </div>
@@ -215,13 +229,13 @@ export const Categories = () => {
           {filteredCategories.map((cat) => (
             <div
               key={cat.id}
-              className="glass-card"
+              className="glass-card glass-card-interactive"
               style={{
                 padding: '20px',
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'space-between',
-                gap: '16px',
+                minHeight: '130px',
                 borderLeft: `4px solid ${cat.color || '#6366F1'}`,
               }}
             >
@@ -230,69 +244,59 @@ export const Categories = () => {
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                     <div
                       style={{
-                        width: '36px',
-                        height: '36px',
-                        borderRadius: '10px',
-                        backgroundColor: `${cat.color || '#6366F1'}20`,
-                        color: cat.color || '#6366F1',
+                        width: '32px',
+                        height: '32px',
+                        borderRadius: '8px',
+                        backgroundColor: `${cat.color || '#6366F1'}18`,
+                        border: `1px solid ${cat.color || '#6366F1'}35`,
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
+                        color: cat.color || '#6366F1',
                       }}
                     >
-                      <Tags size={18} />
+                      <Tags size={16} />
                     </div>
-                    <h4 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+                    <h3 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-primary)' }}>
                       {cat.name}
-                    </h4>
+                    </h3>
                   </div>
 
                   {cat.is_default ? (
-                    <span className="badge badge-neutral" title="System default category">
-                      <Lock size={10} /> Default
+                    <span className="badge badge-neutral" title="System Protected Category">
+                      <Lock size={10} /> System Default
                     </span>
                   ) : (
-                    <span className="badge" style={{ backgroundColor: 'rgba(99, 102, 241, 0.15)', color: '#818CF8' }}>
-                      <Sparkles size={10} /> Custom
+                    <span className="badge badge-income">
+                      Custom
                     </span>
                   )}
                 </div>
 
-                <p style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)', minHeight: '36px' }}>
-                  {cat.description || 'Standard transaction category.'}
+                <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', lineHeight: 1.5 }}>
+                  {cat.description || 'No description provided.'}
                 </p>
               </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid var(--border-subtle)', paddingTop: '12px' }}>
-                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                  {cat.is_active ? 'Active' : 'Archived'}
-                </span>
-
-                {!cat.is_default ? (
-                  <div style={{ display: 'flex', gap: '8px' }}>
-                    <button
-                      className="btn btn-outline"
-                      style={{ padding: '6px' }}
-                      onClick={() => handleOpenEdit(cat)}
-                      title="Edit Category"
-                    >
-                      <Edit2 size={14} />
-                    </button>
-                    <button
-                      className="btn btn-danger"
-                      style={{ padding: '6px' }}
-                      onClick={() => handleOpenDelete(cat)}
-                      title="Delete Category"
-                    >
-                      <Trash2 size={14} />
-                    </button>
-                  </div>
-                ) : (
-                  <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                    System Protected
-                  </span>
-                )}
-              </div>
+              {/* Action Buttons (Only enabled for user-created custom categories) */}
+              {!cat.is_default && (
+                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: '14px', borderTop: '1px solid var(--border-glass)', paddingTop: '10px' }}>
+                  <button
+                    className="btn btn-outline"
+                    style={{ padding: '4px 10px', fontSize: '0.75rem' }}
+                    onClick={() => handleOpenEdit(cat)}
+                  >
+                    <Edit2 size={12} /> Edit
+                  </button>
+                  <button
+                    className="btn btn-danger"
+                    style={{ padding: '4px 10px', fontSize: '0.75rem' }}
+                    onClick={() => handleOpenDelete(cat)}
+                  >
+                    <Trash2 size={12} /> Delete
+                  </button>
+                </div>
+              )}
             </div>
           ))}
         </div>
@@ -306,7 +310,7 @@ export const Categories = () => {
             <input
               type="text"
               className="form-input"
-              placeholder="e.g. Gym & Fitness, Subscriptions"
+              placeholder="e.g. Groceries, Gym, Software"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               required
@@ -314,7 +318,7 @@ export const Categories = () => {
           </div>
 
           <div className="form-group">
-            <label className="form-label">Category Type *</label>
+            <label className="form-label">Transaction Type</label>
             <select
               className="form-select"
               value={formData.type}
@@ -326,26 +330,28 @@ export const Categories = () => {
           </div>
 
           <div className="form-group">
-            <label className="form-label">Accent Color</label>
-            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginTop: '6px' }}>
-              {COLOR_PRESETS.map((color) => (
+            <label className="form-label">Theme Color</label>
+            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginTop: '4px' }}>
+              {COLOR_PRESETS.map((col) => (
                 <button
                   type="button"
-                  key={color}
-                  onClick={() => setFormData({ ...formData, color })}
+                  key={col}
+                  onClick={() => setFormData({ ...formData, color: col })}
+                  aria-label={`Select color ${col}`}
                   style={{
                     width: '28px',
                     height: '28px',
                     borderRadius: '50%',
-                    backgroundColor: color,
-                    border: formData.color === color ? '2px solid #FFFFFF' : '2px solid transparent',
+                    backgroundColor: col,
+                    border: formData.color === col ? '2px solid #FFFFFF' : '2px solid transparent',
                     cursor: 'pointer',
+                    boxShadow: formData.color === col ? '0 0 10px ' + col : 'none',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                   }}
                 >
-                  {formData.color === color && <Check size={14} color="#FFFFFF" />}
+                  {formData.color === col && <Check size={14} color="#FFFFFF" />}
                 </button>
               ))}
             </div>
@@ -356,7 +362,7 @@ export const Categories = () => {
             <textarea
               className="form-textarea"
               rows={2}
-              placeholder="What kind of transactions belong here?"
+              placeholder="Brief explanation of category purpose"
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
             />
@@ -388,33 +394,35 @@ export const Categories = () => {
           </div>
 
           <div className="form-group">
-            <label className="form-label">Accent Color</label>
-            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginTop: '6px' }}>
-              {COLOR_PRESETS.map((color) => (
+            <label className="form-label">Theme Color</label>
+            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginTop: '4px' }}>
+              {COLOR_PRESETS.map((col) => (
                 <button
                   type="button"
-                  key={color}
-                  onClick={() => setFormData({ ...formData, color })}
+                  key={col}
+                  onClick={() => setFormData({ ...formData, color: col })}
+                  aria-label={`Select color ${col}`}
                   style={{
                     width: '28px',
                     height: '28px',
                     borderRadius: '50%',
-                    backgroundColor: color,
-                    border: formData.color === color ? '2px solid #FFFFFF' : '2px solid transparent',
+                    backgroundColor: col,
+                    border: formData.color === col ? '2px solid #FFFFFF' : '2px solid transparent',
                     cursor: 'pointer',
+                    boxShadow: formData.color === col ? '0 0 10px ' + col : 'none',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                   }}
                 >
-                  {formData.color === color && <Check size={14} color="#FFFFFF" />}
+                  {formData.color === col && <Check size={14} color="#FFFFFF" />}
                 </button>
               ))}
             </div>
           </div>
 
           <div className="form-group">
-            <label className="form-label">Description</label>
+            <label className="form-label">Description (Optional)</label>
             <textarea
               className="form-textarea"
               rows={2}
@@ -434,13 +442,14 @@ export const Categories = () => {
         </form>
       </Modal>
 
-      {/* Delete Category Confirmation */}
+      {/* Delete Confirmation Modal */}
       <ConfirmModal
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
         onConfirm={handleDeleteConfirm}
-        title="Delete Category"
-        message={`Are you sure you want to remove '${currentCategory?.name}'?`}
+        title="Delete Custom Category"
+        message={`Are you sure you want to permanently delete category "${currentCategory?.name}"? Any past transactions tagged with this category will retain their history.`}
+        confirmText="Delete Category"
         isLoading={isSubmitting}
       />
     </div>

@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Sparkles, Eye, EyeOff, Lock, Mail, User, Phone, ArrowRight, CheckCircle2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
+import { ThemeToggle } from '../components/common/ThemeToggle';
 
 export const Register = () => {
   const [formData, setFormData] = useState({
@@ -84,17 +85,25 @@ export const Register = () => {
   };
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: '#070A12' }}>
+    <div className="app-canvas" style={{ display: 'flex', minHeight: '100vh', position: 'relative' }}>
+      {/* Top Right Theme Toggle */}
+      <div style={{ position: 'absolute', top: '24px', right: '24px', zIndex: 30 }}>
+        <ThemeToggle />
+      </div>
+
       {/* Left Branding Showcase */}
       <div
         style={{
           flex: 1,
-          background: 'linear-gradient(135deg, #0A1124 0%, #0F172A 50%, #061A23 100%)',
-          borderRight: '1px solid var(--border-subtle)',
+          background: 'linear-gradient(135deg, rgba(10, 17, 36, 0.95) 0%, rgba(15, 23, 42, 0.9) 50%, rgba(6, 26, 35, 0.95) 100%)',
+          backdropFilter: 'blur(20px)',
+          borderRight: '1px solid var(--border-glass)',
           padding: '60px',
           display: 'none',
           flexDirection: 'column',
           justifyContent: 'space-between',
+          position: 'relative',
+          overflow: 'hidden',
         }}
         className="login-left-panel"
       >
@@ -108,74 +117,100 @@ export const Register = () => {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              boxShadow: '0 4px 15px rgba(16, 185, 129, 0.3)',
+              boxShadow: '0 4px 16px rgba(16, 185, 129, 0.35)',
             }}
           >
             <Sparkles size={24} color="#FFFFFF" />
           </div>
-          <span style={{ fontSize: '1.375rem', fontWeight: 800, color: '#FFFFFF', letterSpacing: '-0.02em' }}>
+          <span style={{ fontSize: '1.375rem', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.025em' }}>
             Expense<span style={{ color: 'var(--emerald)' }}>Tracker</span>
           </span>
         </div>
 
-        <div style={{ maxWidth: '460px' }}>
-          <h2 style={{ fontSize: '2.5rem', fontWeight: 800, color: '#FFFFFF', lineHeight: 1.15, marginBottom: '20px', letterSpacing: '-0.03em' }}>
-            Start your journey toward financial freedom.
+        <div style={{ maxWidth: '480px' }}>
+          <div
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              padding: '4px 12px',
+              backgroundColor: 'var(--emerald-bg)',
+              border: '1px solid var(--emerald-border)',
+              borderRadius: 'var(--radius-full)',
+              color: 'var(--text-emerald)',
+              fontSize: '0.75rem',
+              fontWeight: 700,
+              marginBottom: '20px',
+            }}
+          >
+            <Sparkles size={14} /> Join ExpenseTracker
+          </div>
+
+          <h2 style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--text-primary)', lineHeight: 1.15, marginBottom: '20px', letterSpacing: '-0.03em' }}>
+            Start building healthy financial habits today.
           </h2>
-          <p style={{ fontSize: '1.0625rem', color: '#94A3B8', lineHeight: 1.6, marginBottom: '32px' }}>
-            Join thousands of users tracking expenses, keeping monthly budgets in check, and discovering insights across their spending.
+          <p style={{ fontSize: '1.0625rem', color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: '32px' }}>
+            Gain complete visibility into your income, expenses, and savings goals with automated tracking and visual reporting.
           </p>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#E2E8F0', fontSize: '0.875rem' }}>
-              <CheckCircle2 size={18} color="#10B981" />
-              <span>Full control over income and expense records</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: 'var(--text-primary)', fontSize: '0.875rem' }}>
+              <CheckCircle2 size={18} color="var(--emerald)" />
+              <span>Smart category budgets with automatic utilization monitoring</span>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#E2E8F0', fontSize: '0.875rem' }}>
-              <CheckCircle2 size={18} color="#10B981" />
-              <span>Category management with default presets</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: 'var(--text-primary)', fontSize: '0.875rem' }}>
+              <CheckCircle2 size={18} color="var(--emerald)" />
+              <span>Interactive cashflow analytics & monthly breakdowns</span>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#E2E8F0', fontSize: '0.875rem' }}>
-              <CheckCircle2 size={18} color="#10B981" />
-              <span>Complete data privacy and ownership isolation</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: 'var(--text-primary)', fontSize: '0.875rem' }}>
+              <CheckCircle2 size={18} color="var(--emerald)" />
+              <span>Export clean CSV & Excel reports with custom filters</span>
             </div>
           </div>
         </div>
 
-        <div style={{ fontSize: '0.8125rem', color: '#64748B' }}>
+        <div style={{ fontSize: '0.8125rem', color: 'var(--text-muted)' }}>
           © 2026 ExpenseTracker AI. Built for financial confidence.
         </div>
       </div>
 
-      {/* Right Registration Card */}
+      {/* Right Register Form Card */}
       <div
         style={{
           flex: 1,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          padding: '32px 20px',
-          overflowY: 'auto',
+          padding: '40px 24px',
+          zIndex: 10,
         }}
       >
-        <div style={{ width: '100%', maxWidth: '480px' }}>
+        <div
+          className="glass-card animate-fade-in"
+          style={{
+            width: '100%',
+            maxWidth: '520px',
+            padding: '40px 36px',
+            border: '1px solid var(--border-glass-highlight)',
+          }}
+        >
           <div style={{ marginBottom: '28px' }}>
-            <h2 style={{ fontSize: '1.75rem', fontWeight: 800, color: '#FFFFFF', marginBottom: '8px', letterSpacing: '-0.02em' }}>
+            <h2 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '8px', letterSpacing: '-0.025em' }}>
               Create your account
             </h2>
             <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
-              Fill in the details below to set up your financial workspace.
+              Set up your profile to start tracking your finances in real time.
             </p>
           </div>
 
           {errorMessage && (
             <div
-              className="glass-card animate-fade-in"
+              className="animate-fade-in"
               style={{
                 padding: '12px 16px',
-                backgroundColor: 'rgba(239, 68, 68, 0.12)',
-                border: '1px solid rgba(239, 68, 68, 0.3)',
-                color: '#F87171',
+                backgroundColor: 'var(--rose-bg)',
+                border: '1px solid var(--rose-border)',
+                color: 'var(--text-rose)',
                 fontSize: '0.875rem',
                 borderRadius: 'var(--radius-md)',
                 marginBottom: '20px',
@@ -186,8 +221,8 @@ export const Register = () => {
           )}
 
           <form onSubmit={handleSubmit}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
-              <div className="form-group">
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '16px' }}>
+              <div className="form-group" style={{ marginBottom: 0 }}>
                 <label className="form-label" htmlFor="first_name">First Name *</label>
                 <div style={{ position: 'relative' }}>
                   <input
@@ -195,17 +230,17 @@ export const Register = () => {
                     name="first_name"
                     type="text"
                     className="form-input"
-                    placeholder="John"
+                    placeholder="Jane"
                     value={formData.first_name}
                     onChange={handleChange}
                     style={{ paddingLeft: '38px' }}
                     required
                   />
-                  <User size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+                  <User size={17} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
                 </div>
               </div>
 
-              <div className="form-group">
+              <div className="form-group" style={{ marginBottom: 0 }}>
                 <label className="form-label" htmlFor="last_name">Last Name</label>
                 <input
                   id="last_name"
@@ -233,12 +268,12 @@ export const Register = () => {
                   style={{ paddingLeft: '38px' }}
                   required
                 />
-                <Mail size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+                <Mail size={17} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
               </div>
             </div>
 
             <div className="form-group">
-              <label className="form-label" htmlFor="mobile_number">Mobile Number</label>
+              <label className="form-label" htmlFor="mobile_number">Mobile Number (Optional)</label>
               <div style={{ position: 'relative' }}>
                 <input
                   id="mobile_number"
@@ -250,115 +285,101 @@ export const Register = () => {
                   onChange={handleChange}
                   style={{ paddingLeft: '38px' }}
                 />
-                <Phone size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+                <Phone size={17} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
               </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
-              <div className="form-group">
-                <label className="form-label" htmlFor="password">Password *</label>
-                <div style={{ position: 'relative' }}>
-                  <input
-                    id="password"
-                    name="password"
-                    type={showPassword ? 'text' : 'password'}
-                    className="form-input"
-                    placeholder="••••••••"
-                    value={formData.password}
-                    onChange={handleChange}
-                    style={{ paddingLeft: '36px', paddingRight: '36px' }}
-                    required
-                  />
-                  <Lock size={16} style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    style={{
-                      position: 'absolute',
-                      right: '10px',
-                      top: '50%',
-                      transform: 'translateY(-50%)',
-                      background: 'transparent',
-                      border: 'none',
-                      color: 'var(--text-muted)',
-                      cursor: 'pointer',
-                      display: 'flex',
-                    }}
-                  >
-                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                  </button>
-                </div>
+            <div className="form-group">
+              <label className="form-label" htmlFor="password">Password *</label>
+              <div style={{ position: 'relative' }}>
+                <input
+                  id="password"
+                  name="password"
+                  type={showPassword ? 'text' : 'password'}
+                  className="form-input"
+                  placeholder="At least 8 characters (Upper, lower, digit)"
+                  value={formData.password}
+                  onChange={handleChange}
+                  style={{ paddingLeft: '38px', paddingRight: '40px' }}
+                  required
+                />
+                <Lock size={17} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                  style={{
+                    position: 'absolute',
+                    right: '12px',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    background: 'transparent',
+                    border: 'none',
+                    color: 'var(--text-muted)',
+                    cursor: 'pointer',
+                    display: 'flex',
+                  }}
+                >
+                  {showPassword ? <EyeOff size={17} /> : <Eye size={17} />}
+                </button>
               </div>
 
-              <div className="form-group">
-                <label className="form-label" htmlFor="password_confirmation">Confirm Password *</label>
-                <div style={{ position: 'relative' }}>
-                  <input
-                    id="password_confirmation"
-                    name="password_confirmation"
-                    type={showConfirmPassword ? 'text' : 'password'}
-                    className="form-input"
-                    placeholder="••••••••"
-                    value={formData.password_confirmation}
-                    onChange={handleChange}
-                    style={{ paddingLeft: '36px', paddingRight: '36px' }}
-                    required
-                  />
-                  <Lock size={16} style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
-                  <button
-                    type="button"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    style={{
-                      position: 'absolute',
-                      right: '10px',
-                      top: '50%',
-                      transform: 'translateY(-50%)',
-                      background: 'transparent',
-                      border: 'none',
-                      color: 'var(--text-muted)',
-                      cursor: 'pointer',
-                      display: 'flex',
-                    }}
-                  >
-                    {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                  </button>
+              {/* Password strength meter */}
+              {formData.password && (
+                <div style={{ marginTop: '8px' }}>
+                  <div style={{ display: 'flex', gap: '4px', height: '4px', borderRadius: '2px', overflow: 'hidden' }}>
+                    <div style={{ flex: 1, backgroundColor: strength >= 1 ? '#EF4444' : 'var(--border-glass)' }} />
+                    <div style={{ flex: 1, backgroundColor: strength >= 2 ? '#F59E0B' : 'var(--border-glass)' }} />
+                    <div style={{ flex: 1, backgroundColor: strength >= 3 ? '#38BDF8' : 'var(--border-glass)' }} />
+                    <div style={{ flex: 1, backgroundColor: strength >= 4 ? '#10B981' : 'var(--border-glass)' }} />
+                  </div>
+                  <div style={{ fontSize: '0.6875rem', color: 'var(--text-muted)', marginTop: '4px' }}>
+                    {strength <= 1 ? 'Weak' : strength <= 3 ? 'Medium' : 'Strong password'}
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
 
-            {/* Password Strength Meter */}
-            {formData.password && (
-              <div style={{ marginBottom: '16px' }}>
-                <div style={{ display: 'flex', gap: '4px', height: '4px', marginBottom: '6px' }}>
-                  {[1, 2, 3, 4].map((step) => (
-                    <div
-                      key={step}
-                      style={{
-                        flex: 1,
-                        borderRadius: '2px',
-                        backgroundColor:
-                          strength >= step
-                            ? strength <= 2
-                              ? '#EF4444'
-                              : strength === 3
-                              ? '#F59E0B'
-                              : '#10B981'
-                            : '#1E293B',
-                        transition: 'background-color 0.3s ease',
-                      }}
-                    />
-                  ))}
-                </div>
-                <span style={{ fontSize: '0.6875rem', color: 'var(--text-muted)' }}>
-                  {strength < 2 ? 'Weak password (must have 8+ chars, uppercase, lowercase, digit)' : strength === 3 ? 'Medium strength' : 'Strong password'}
-                </span>
+            <div className="form-group">
+              <label className="form-label" htmlFor="password_confirmation">Confirm Password *</label>
+              <div style={{ position: 'relative' }}>
+                <input
+                  id="password_confirmation"
+                  name="password_confirmation"
+                  type={showConfirmPassword ? 'text' : 'password'}
+                  className="form-input"
+                  placeholder="Repeat your password"
+                  value={formData.password_confirmation}
+                  onChange={handleChange}
+                  style={{ paddingLeft: '38px', paddingRight: '40px' }}
+                  required
+                />
+                <Lock size={17} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+                  style={{
+                    position: 'absolute',
+                    right: '12px',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    background: 'transparent',
+                    border: 'none',
+                    color: 'var(--text-muted)',
+                    cursor: 'pointer',
+                    display: 'flex',
+                  }}
+                >
+                  {showConfirmPassword ? <EyeOff size={17} /> : <Eye size={17} />}
+                </button>
               </div>
-            )}
+            </div>
 
             <button
               type="submit"
               className="btn btn-primary"
-              style={{ width: '100%', padding: '12px', fontSize: '0.9375rem', marginTop: '10px' }}
+              style={{ width: '100%', padding: '12px', fontSize: '0.9375rem', marginTop: '12px' }}
               disabled={isLoading}
             >
               {isLoading ? 'Creating account...' : 'Create Account'}

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Menu, Sparkles, User, ShieldCheck } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { ThemeToggle } from '../common/ThemeToggle';
 
 export const Topbar = ({ pageTitle = 'Dashboard', onToggleSidebar }) => {
   const { user } = useAuth();
@@ -9,7 +10,7 @@ export const Topbar = ({ pageTitle = 'Dashboard', onToggleSidebar }) => {
     <header
       style={{
         height: '72px',
-        backgroundColor: 'rgba(6, 9, 19, 0.75)',
+        backgroundColor: 'var(--bg-topbar)',
         backdropFilter: 'blur(20px) saturate(180%)',
         WebkitBackdropFilter: 'blur(20px) saturate(180%)',
         borderBottom: '1px solid var(--border-glass)',
@@ -20,7 +21,8 @@ export const Topbar = ({ pageTitle = 'Dashboard', onToggleSidebar }) => {
         position: 'sticky',
         top: 0,
         zIndex: 15,
-        boxShadow: '0 4px 20px 0 rgba(0, 0, 0, 0.25)',
+        boxShadow: 'var(--shadow-glass-sm)',
+        transition: 'background-color 0.3s ease, border-color 0.3s ease',
       }}
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
@@ -28,11 +30,11 @@ export const Topbar = ({ pageTitle = 'Dashboard', onToggleSidebar }) => {
           onClick={onToggleSidebar}
           aria-label="Toggle navigation menu"
           style={{
-            background: 'rgba(255, 255, 255, 0.04)',
+            background: 'var(--bg-surface)',
             border: '1px solid var(--border-glass)',
             color: 'var(--text-secondary)',
             cursor: 'pointer',
-            padding: '7px',
+            padding: '8px',
             display: 'flex',
             borderRadius: 'var(--radius-sm)',
             transition: 'all 0.2s ease',
@@ -48,18 +50,21 @@ export const Topbar = ({ pageTitle = 'Dashboard', onToggleSidebar }) => {
         </div>
       </div>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+        {/* Animated Light/Dark Theme Switcher */}
+        <ThemeToggle />
+
         {/* Live Sync Status Pill */}
         <div
           style={{
             display: 'flex',
             alignItems: 'center',
             gap: '8px',
-            padding: '5px 14px',
-            backgroundColor: 'rgba(16, 185, 129, 0.08)',
-            border: '1px solid rgba(16, 185, 129, 0.25)',
+            padding: '6px 14px',
+            backgroundColor: 'var(--emerald-bg)',
+            border: '1px solid var(--emerald-border)',
             borderRadius: 'var(--radius-full)',
-            boxShadow: '0 2px 10px rgba(16, 185, 129, 0.15)',
+            boxShadow: 'var(--shadow-glow-emerald)',
           }}
         >
           <span
@@ -77,22 +82,22 @@ export const Topbar = ({ pageTitle = 'Dashboard', onToggleSidebar }) => {
           </span>
         </div>
 
-        {/* User Pill */}
+        {/* User Badge */}
         <div
           style={{
             display: 'flex',
             alignItems: 'center',
             gap: '10px',
             padding: '4px 12px 4px 6px',
-            backgroundColor: 'rgba(255, 255, 255, 0.03)',
+            backgroundColor: 'var(--bg-surface)',
             border: '1px solid var(--border-glass)',
             borderRadius: 'var(--radius-full)',
           }}
         >
           <div
             style={{
-              width: '30px',
-              height: '30px',
+              width: '32px',
+              height: '32px',
               borderRadius: '50%',
               background: 'linear-gradient(135deg, #6366F1 0%, #4F46E5 100%)',
               color: '#FFFFFF',

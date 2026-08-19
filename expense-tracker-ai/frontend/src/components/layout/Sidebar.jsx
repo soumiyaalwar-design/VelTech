@@ -40,18 +40,18 @@ export const Sidebar = ({ isCollapsed, onToggle }) => {
     <aside
       style={{
         width: isCollapsed ? '76px' : '264px',
-        backgroundColor: 'rgba(8, 13, 26, 0.88)',
+        backgroundColor: 'var(--bg-sidebar)',
         backdropFilter: 'blur(24px) saturate(190%)',
         WebkitBackdropFilter: 'blur(24px) saturate(190%)',
         borderRight: '1px solid var(--border-glass)',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
-        transition: 'width 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
+        transition: 'width 0.25s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.3s ease, border-color 0.3s ease',
         position: 'relative',
         zIndex: 20,
         height: '100vh',
-        boxShadow: '4px 0 24px 0 rgba(0, 0, 0, 0.35)',
+        boxShadow: 'var(--shadow-glass-sm)',
       }}
     >
       {/* Brand & Header */}
@@ -83,7 +83,7 @@ export const Sidebar = ({ isCollapsed, onToggle }) => {
               <Sparkles size={20} color="#FFFFFF" />
             </div>
             {!isCollapsed && (
-              <span style={{ fontSize: '1.125rem', fontWeight: 800, color: '#FFFFFF', letterSpacing: '-0.025em', whiteSpace: 'nowrap' }}>
+              <span style={{ fontSize: '1.125rem', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.025em', whiteSpace: 'nowrap' }}>
                 Expense<span style={{ color: 'var(--emerald)' }}>Tracker</span>
               </span>
             )}
@@ -93,7 +93,7 @@ export const Sidebar = ({ isCollapsed, onToggle }) => {
             onClick={onToggle}
             aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
             style={{
-              background: 'rgba(255, 255, 255, 0.04)',
+              background: 'var(--bg-surface)',
               border: '1px solid var(--border-glass)',
               color: 'var(--text-secondary)',
               cursor: 'pointer',
@@ -121,12 +121,12 @@ export const Sidebar = ({ isCollapsed, onToggle }) => {
                 padding: isCollapsed ? '12px 0' : '11px 16px',
                 justifyContent: isCollapsed ? 'center' : 'flex-start',
                 borderRadius: 'var(--radius-md)',
-                color: isActive ? '#FFFFFF' : 'var(--text-secondary)',
+                color: isActive ? 'var(--text-primary)' : 'var(--text-secondary)',
                 background: isActive
-                  ? 'linear-gradient(90deg, rgba(99, 102, 241, 0.18) 0%, rgba(99, 102, 241, 0.04) 100%)'
+                  ? 'linear-gradient(90deg, var(--indigo-bg) 0%, transparent 100%)'
                   : 'transparent',
                 border: isActive
-                  ? '1px solid rgba(99, 102, 241, 0.32)'
+                  ? '1px solid var(--indigo-border)'
                   : '1px solid transparent',
                 borderLeft: isActive
                   ? '3px solid var(--indigo)'
@@ -135,10 +135,10 @@ export const Sidebar = ({ isCollapsed, onToggle }) => {
                 fontWeight: isActive ? 700 : 500,
                 fontSize: '0.875rem',
                 transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
-                boxShadow: isActive ? '0 4px 16px rgba(0, 0, 0, 0.25)' : 'none',
+                boxShadow: isActive ? 'var(--shadow-glass-sm)' : 'none',
               })}
             >
-              <item.icon size={20} style={{ minWidth: '20px', color: item.path === '/' ? 'inherit' : 'inherit' }} />
+              <item.icon size={20} style={{ minWidth: '20px' }} />
               {!isCollapsed && <span>{item.name}</span>}
             </NavLink>
           ))}
@@ -157,8 +157,8 @@ export const Sidebar = ({ isCollapsed, onToggle }) => {
             padding: isCollapsed ? '10px 0' : '10px 12px',
             justifyContent: isCollapsed ? 'center' : 'flex-start',
             borderRadius: 'var(--radius-md)',
-            color: isActive ? '#FFFFFF' : 'var(--text-secondary)',
-            backgroundColor: isActive ? 'rgba(255, 255, 255, 0.08)' : 'rgba(255, 255, 255, 0.03)',
+            color: isActive ? 'var(--text-primary)' : 'var(--text-secondary)',
+            backgroundColor: isActive ? 'var(--bg-surface-hover)' : 'var(--bg-surface)',
             border: '1px solid var(--border-glass)',
             textDecoration: 'none',
             fontSize: '0.875rem',
@@ -174,14 +174,14 @@ export const Sidebar = ({ isCollapsed, onToggle }) => {
                 height: '34px',
                 minWidth: '34px',
                 borderRadius: '50%',
-                backgroundColor: 'rgba(99, 102, 241, 0.2)',
-                border: '1px solid rgba(99, 102, 241, 0.4)',
+                backgroundColor: 'var(--indigo-bg)',
+                border: '1px solid var(--indigo-border)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 fontWeight: 700,
                 fontSize: '0.8125rem',
-                color: '#818CF8',
+                color: 'var(--indigo)',
               }}
             >
               {user?.first_name ? user.first_name[0].toUpperCase() : 'U'}
@@ -196,7 +196,7 @@ export const Sidebar = ({ isCollapsed, onToggle }) => {
                 height: '8px',
                 borderRadius: '50%',
                 backgroundColor: 'var(--emerald)',
-                border: '2px solid #080D1A',
+                border: '2px solid var(--bg-sidebar)',
               }}
             />
           </div>
@@ -226,7 +226,7 @@ export const Sidebar = ({ isCollapsed, onToggle }) => {
             borderRadius: 'var(--radius-md)',
             background: 'transparent',
             border: 'none',
-            color: 'var(--rose)',
+            color: 'var(--text-rose)',
             cursor: 'pointer',
             fontSize: '0.875rem',
             fontWeight: 600,

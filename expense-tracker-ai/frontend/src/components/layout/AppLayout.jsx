@@ -30,7 +30,7 @@ export const AppLayout = () => {
 
   return (
     <div className="app-canvas" style={{ display: 'flex', minHeight: '100vh', position: 'relative', overflow: 'hidden' }}>
-      {/* Subtle Atmospheric Ambient Glow Lights (Fixed background elements) */}
+      {/* Subtle Atmospheric Ambient Glow Lights (Theme Adaptive) */}
       <div
         aria-hidden="true"
         style={{
@@ -40,9 +40,10 @@ export const AppLayout = () => {
           width: '600px',
           height: '600px',
           borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(16, 185, 129, 0.07) 0%, rgba(16, 185, 129, 0) 70%)',
+          background: 'radial-gradient(circle, var(--orb-top-color) 0%, transparent 70%)',
           pointerEvents: 'none',
           zIndex: 0,
+          transition: 'background 0.4s ease',
         }}
       />
       <div
@@ -54,9 +55,10 @@ export const AppLayout = () => {
           width: '700px',
           height: '700px',
           borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(99, 102, 241, 0.08) 0%, rgba(99, 102, 241, 0) 70%)',
+          background: 'radial-gradient(circle, var(--orb-bottom-color) 0%, transparent 70%)',
           pointerEvents: 'none',
           zIndex: 0,
+          transition: 'background 0.4s ease',
         }}
       />
 

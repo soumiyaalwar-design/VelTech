@@ -69,64 +69,73 @@ export const Profile = () => {
   return (
     <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '24px', maxWidth: '900px' }}>
       <div>
-        <h2 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.02em', marginBottom: '4px' }}>
-          Account Settings
+        <h2 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.025em', marginBottom: '4px' }}>
+          Account Settings & Security
         </h2>
         <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
-          Manage your personal details, credentials, and account security.
+          Manage your personal details, credentials, and authentication preferences.
         </p>
       </div>
 
       {/* User Overview Header Card */}
-      <div className="glass-card" style={{ padding: '24px', display: 'flex', alignItems: 'center', gap: '20px' }}>
+      <div className="glass-card" style={{ padding: '28px', display: 'flex', alignItems: 'center', gap: '22px' }}>
         <div
           style={{
-            width: '64px',
-            height: '64px',
+            width: '68px',
+            height: '68px',
             borderRadius: '50%',
-            backgroundColor: 'var(--indigo)',
+            background: 'linear-gradient(135deg, #6366F1 0%, #4F46E5 100%)',
             color: '#FFFFFF',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: '1.5rem',
+            fontSize: '1.75rem',
             fontWeight: 800,
-            boxShadow: '0 4px 16px rgba(99, 102, 241, 0.4)',
+            boxShadow: '0 6px 20px rgba(99, 102, 241, 0.4)',
           }}
         >
           {user?.first_name ? user.first_name[0].toUpperCase() : 'U'}
         </div>
 
         <div>
-          <h3 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '4px' }}>
-            {user?.first_name} {user?.last_name || ''}
-          </h3>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '4px' }}>
+            <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-primary)' }}>
+              {user?.first_name} {user?.last_name || ''}
+            </h3>
+            <span className="badge badge-income">
+              <ShieldCheck size={12} /> Active Account
+            </span>
+          </div>
+
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', fontSize: '0.8125rem', color: 'var(--text-muted)' }}>
             <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
               <Mail size={14} /> {user?.email}
             </span>
-            <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <ShieldCheck size={14} color="var(--emerald)" /> Verified Member
-            </span>
+            {user?.mobile_number && (
+              <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <Phone size={14} /> {user?.mobile_number}
+              </span>
+            )}
+            {user?.created_at && (
+              <span>Member since {formatDate(user.created_at)}</span>
+            )}
           </div>
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(380px, 1fr))', gap: '24px' }}>
-        {/* Personal Details Form */}
-        <div className="glass-card" style={{ padding: '24px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' }}>
-            <div style={{ padding: '6px', borderRadius: '8px', background: 'rgba(56, 189, 248, 0.12)', color: '#38BDF8' }}>
-              <User size={18} />
-            </div>
-            <h4 style={{ fontSize: '1.0625rem', fontWeight: 700, color: 'var(--text-primary)' }}>
-              Personal Information
-            </h4>
-          </div>
+      {/* Personal Info Form */}
+      <div className="glass-card" style={{ padding: '28px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px', borderBottom: '1px solid var(--border-glass)', paddingBottom: '14px' }}>
+          <User size={18} color="var(--indigo)" />
+          <h3 style={{ fontSize: '1.0625rem', fontWeight: 800, color: 'var(--text-primary)' }}>
+            Personal Information
+          </h3>
+        </div>
 
-          <form onSubmit={handleProfileSubmit}>
+        <form onSubmit={handleProfileSubmit}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
             <div className="form-group">
-              <label className="form-label">First Name</label>
+              <label className="form-label">First Name *</label>
               <input
                 type="text"
                 className="form-input"
@@ -145,17 +154,18 @@ export const Profile = () => {
                 onChange={(e) => setProfileForm({ ...profileForm, last_name: e.target.value })}
               />
             </div>
+          </div>
 
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
             <div className="form-group">
-              <label className="form-label">Email Address</label>
+              <label className="form-label">Email Address (Immutable)</label>
               <input
                 type="email"
                 className="form-input"
                 value={user?.email || ''}
                 disabled
-                style={{ opacity: 0.6, cursor: 'not-allowed' }}
+                style={{ opacity: 0.65, cursor: 'not-allowed' }}
               />
-              <span style={{ fontSize: '0.6875rem', color: 'var(--text-muted)' }}>Email address cannot be changed.</span>
             </div>
 
             <div className="form-group">
@@ -168,49 +178,46 @@ export const Profile = () => {
                 onChange={(e) => setProfileForm({ ...profileForm, mobile_number: e.target.value })}
               />
             </div>
-
-            <button
-              type="submit"
-              className="btn btn-primary"
-              style={{ marginTop: '10px' }}
-              disabled={isUpdatingProfile}
-            >
-              <Save size={16} />
-              {isUpdatingProfile ? 'Saving...' : 'Save Changes'}
-            </button>
-          </form>
-        </div>
-
-        {/* Change Password Form */}
-        <div className="glass-card" style={{ padding: '24px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' }}>
-            <div style={{ padding: '6px', borderRadius: '8px', background: 'rgba(99, 102, 241, 0.12)', color: 'var(--indigo)' }}>
-              <KeyRound size={18} />
-            </div>
-            <h4 style={{ fontSize: '1.0625rem', fontWeight: 700, color: 'var(--text-primary)' }}>
-              Change Password
-            </h4>
           </div>
 
-          <form onSubmit={handlePasswordSubmit}>
-            <div className="form-group">
-              <label className="form-label">Current Password</label>
-              <input
-                type="password"
-                className="form-input"
-                placeholder="••••••••"
-                value={passwordForm.old_password}
-                onChange={(e) => setPasswordForm({ ...passwordForm, old_password: e.target.value })}
-                required
-              />
-            </div>
+          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px' }}>
+            <button type="submit" className="btn btn-primary" disabled={isUpdatingProfile}>
+              <Save size={16} />
+              {isUpdatingProfile ? 'Saving Details...' : 'Save Profile Details'}
+            </button>
+          </div>
+        </form>
+      </div>
 
+      {/* Security & Password Change Form */}
+      <div className="glass-card" style={{ padding: '28px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px', borderBottom: '1px solid var(--border-glass)', paddingBottom: '14px' }}>
+          <KeyRound size={18} color="var(--rose)" />
+          <h3 style={{ fontSize: '1.0625rem', fontWeight: 800, color: 'var(--text-primary)' }}>
+            Update Security Password
+          </h3>
+        </div>
+
+        <form onSubmit={handlePasswordSubmit}>
+          <div className="form-group">
+            <label className="form-label">Current Password *</label>
+            <input
+              type="password"
+              className="form-input"
+              placeholder="••••••••"
+              value={passwordForm.old_password}
+              onChange={(e) => setPasswordForm({ ...passwordForm, old_password: e.target.value })}
+              required
+            />
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
             <div className="form-group">
-              <label className="form-label">New Password</label>
+              <label className="form-label">New Password *</label>
               <input
                 type="password"
                 className="form-input"
-                placeholder="••••••••"
+                placeholder="At least 8 characters"
                 value={passwordForm.new_password}
                 onChange={(e) => setPasswordForm({ ...passwordForm, new_password: e.target.value })}
                 required
@@ -218,28 +225,25 @@ export const Profile = () => {
             </div>
 
             <div className="form-group">
-              <label className="form-label">Confirm New Password</label>
+              <label className="form-label">Confirm New Password *</label>
               <input
                 type="password"
                 className="form-input"
-                placeholder="••••••••"
+                placeholder="Repeat new password"
                 value={passwordForm.confirm_password}
                 onChange={(e) => setPasswordForm({ ...passwordForm, confirm_password: e.target.value })}
                 required
               />
             </div>
+          </div>
 
-            <button
-              type="submit"
-              className="btn btn-indigo"
-              style={{ marginTop: '10px' }}
-              disabled={isUpdatingPassword}
-            >
+          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px' }}>
+            <button type="submit" className="btn btn-indigo" disabled={isUpdatingPassword}>
               <Lock size={16} />
               {isUpdatingPassword ? 'Updating Password...' : 'Update Password'}
             </button>
-          </form>
-        </div>
+          </div>
+        </form>
       </div>
     </div>
   );

@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Sparkles, Eye, EyeOff, Lock, Mail, ArrowRight, CheckCircle2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
+import { ThemeToggle } from '../components/common/ThemeToggle';
 
 export const Login = () => {
   const [email, setEmail] = useState('');
@@ -39,17 +40,25 @@ export const Login = () => {
   };
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: '#070A12' }}>
-      {/* Left Branding Showcase */}
+    <div className="app-canvas" style={{ display: 'flex', minHeight: '100vh', position: 'relative' }}>
+      {/* Top Right Theme Toggle */}
+      <div style={{ position: 'absolute', top: '24px', right: '24px', zIndex: 30 }}>
+        <ThemeToggle />
+      </div>
+
+      {/* Left Branding Showcase (Desktop) */}
       <div
         style={{
           flex: 1,
-          background: 'linear-gradient(135deg, #0A1124 0%, #0F172A 50%, #061A23 100%)',
-          borderRight: '1px solid var(--border-subtle)',
+          background: 'linear-gradient(135deg, rgba(10, 17, 36, 0.95) 0%, rgba(15, 23, 42, 0.9) 50%, rgba(6, 26, 35, 0.95) 100%)',
+          backdropFilter: 'blur(20px)',
+          borderRight: '1px solid var(--border-glass)',
           padding: '60px',
           display: 'none',
           flexDirection: 'column',
           justifyContent: 'space-between',
+          position: 'relative',
+          overflow: 'hidden',
         }}
         className="login-left-panel"
       >
@@ -63,58 +72,85 @@ export const Login = () => {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              boxShadow: '0 4px 15px rgba(16, 185, 129, 0.3)',
+              boxShadow: '0 4px 16px rgba(16, 185, 129, 0.35)',
             }}
           >
             <Sparkles size={24} color="#FFFFFF" />
           </div>
-          <span style={{ fontSize: '1.375rem', fontWeight: 800, color: '#FFFFFF', letterSpacing: '-0.02em' }}>
+          <span style={{ fontSize: '1.375rem', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.025em' }}>
             Expense<span style={{ color: 'var(--emerald)' }}>Tracker</span>
           </span>
         </div>
 
-        <div style={{ maxWidth: '460px' }}>
-          <h2 style={{ fontSize: '2.5rem', fontWeight: 800, color: '#FFFFFF', lineHeight: 1.15, marginBottom: '20px', letterSpacing: '-0.03em' }}>
+        <div style={{ maxWidth: '480px' }}>
+          <div
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              padding: '4px 12px',
+              backgroundColor: 'var(--emerald-bg)',
+              border: '1px solid var(--emerald-border)',
+              borderRadius: 'var(--radius-full)',
+              color: 'var(--text-emerald)',
+              fontSize: '0.75rem',
+              fontWeight: 700,
+              marginBottom: '20px',
+            }}
+          >
+            <Sparkles size={14} /> Financial Intelligence Platform
+          </div>
+
+          <h2 style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--text-primary)', lineHeight: 1.15, marginBottom: '20px', letterSpacing: '-0.03em' }}>
             Master your money with clarity and precision.
           </h2>
-          <p style={{ fontSize: '1.0625rem', color: '#94A3B8', lineHeight: 1.6, marginBottom: '32px' }}>
+          <p style={{ fontSize: '1.0625rem', color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: '32px' }}>
             Enterprise-grade financial intelligence, real-time budget tracking, dynamic analytics, and effortless expense categorization.
           </p>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#E2E8F0', fontSize: '0.875rem' }}>
-              <CheckCircle2 size={18} color="#10B981" />
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: 'var(--text-primary)', fontSize: '0.875rem' }}>
+              <CheckCircle2 size={18} color="var(--emerald)" />
               <span>Real-time budget limit threshold notifications</span>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#E2E8F0', fontSize: '0.875rem' }}>
-              <CheckCircle2 size={18} color="#10B981" />
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: 'var(--text-primary)', fontSize: '0.875rem' }}>
+              <CheckCircle2 size={18} color="var(--emerald)" />
               <span>Interactive Recharts visualizations & category analytics</span>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#E2E8F0', fontSize: '0.875rem' }}>
-              <CheckCircle2 size={18} color="#10B981" />
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: 'var(--text-primary)', fontSize: '0.875rem' }}>
+              <CheckCircle2 size={18} color="var(--emerald)" />
               <span>Instant CSV and Excel workbook financial reporting</span>
             </div>
           </div>
         </div>
 
-        <div style={{ fontSize: '0.8125rem', color: '#64748B' }}>
+        <div style={{ fontSize: '0.8125rem', color: 'var(--text-muted)' }}>
           © 2026 ExpenseTracker AI. Built for financial confidence.
         </div>
       </div>
 
-      {/* Right Login Card */}
+      {/* Right Login Form Card */}
       <div
         style={{
           flex: 1,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          padding: '32px 20px',
+          padding: '40px 24px',
+          zIndex: 10,
         }}
       >
-        <div style={{ width: '100%', maxWidth: '420px' }}>
+        <div
+          className="glass-card animate-fade-in"
+          style={{
+            width: '100%',
+            maxWidth: '440px',
+            padding: '40px 36px',
+            border: '1px solid var(--border-glass-highlight)',
+          }}
+        >
           <div style={{ marginBottom: '32px' }}>
-            <h2 style={{ fontSize: '1.75rem', fontWeight: 800, color: '#FFFFFF', marginBottom: '8px', letterSpacing: '-0.02em' }}>
+            <h2 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '8px', letterSpacing: '-0.025em' }}>
               Welcome back
             </h2>
             <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
@@ -124,12 +160,12 @@ export const Login = () => {
 
           {errorMessage && (
             <div
-              className="glass-card animate-fade-in"
+              className="animate-fade-in"
               style={{
                 padding: '12px 16px',
-                backgroundColor: 'rgba(239, 68, 68, 0.12)',
-                border: '1px solid rgba(239, 68, 68, 0.3)',
-                color: '#F87171',
+                backgroundColor: 'var(--rose-bg)',
+                border: '1px solid var(--rose-border)',
+                color: 'var(--text-rose)',
                 fontSize: '0.875rem',
                 borderRadius: 'var(--radius-md)',
                 marginBottom: '20px',
@@ -150,10 +186,10 @@ export const Login = () => {
                   placeholder="name@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  style={{ paddingLeft: '38px' }}
+                  style={{ paddingLeft: '40px' }}
                   required
                 />
-                <Mail size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+                <Mail size={18} style={{ position: 'absolute', left: '13px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
               </div>
             </div>
 
@@ -169,13 +205,14 @@ export const Login = () => {
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  style={{ paddingLeft: '38px', paddingRight: '40px' }}
+                  style={{ paddingLeft: '40px', paddingRight: '42px' }}
                   required
                 />
-                <Lock size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+                <Lock size={18} style={{ position: 'absolute', left: '13px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
                   style={{
                     position: 'absolute',
                     right: '12px',

@@ -114,24 +114,22 @@ export const Budgets = () => {
       return;
     }
     if (!formData.category_id) {
-      toast.error('Please select an expense category.');
+      toast.error('Please select a category.');
       return;
     }
 
     setIsSubmitting(true);
     try {
       await budgetService.createBudget({
-        category_id: formData.category_id,
-        amount: formData.amount,
-        month: Number(formData.month),
-        year: Number(formData.year),
-        alert_percentage: formData.alert_percentage,
+        ...formData,
+        month: selectedMonth,
+        year: selectedYear,
       });
       toast.success('Budget created successfully');
       setIsAddModalOpen(false);
       fetchBudgets();
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Failed to create budget. Check for duplicates.');
+      toast.error(err.response?.data?.message || 'Failed to create budget');
     } finally {
       setIsSubmitting(false);
     }
@@ -147,10 +145,7 @@ export const Budgets = () => {
     setIsSubmitting(true);
     try {
       await budgetService.updateBudget(currentBudget.id, {
-        category_id: formData.category_id,
         amount: formData.amount,
-        month: Number(formData.month),
-        year: Number(formData.year),
         alert_percentage: formData.alert_percentage,
       });
       toast.success('Budget updated successfully');
@@ -168,7 +163,7 @@ export const Budgets = () => {
     setIsSubmitting(true);
     try {
       await budgetService.deleteBudget(currentBudget.id);
-      toast.success('Budget removed successfully');
+      toast.success('Budget deleted successfully');
       setIsDeleteModalOpen(false);
       fetchBudgets();
     } catch {
@@ -178,11 +173,10 @@ export const Budgets = () => {
     }
   };
 
-  // Summary KPI Calculations
-  const totalAllocated = budgets.reduce((acc, curr) => acc + parseFloat(curr.amount || 0), 0);
-  const totalSpent = budgets.reduce((acc, curr) => acc + parseFloat(curr.actual_expense || 0), 0);
-  const totalRemaining = totalAllocated - totalSpent;
-  const overallUsagePct = totalAllocated > 0 ? ((totalSpent / totalAllocated) * 100).toFixed(1) : 0;
+  const totalBudget = budgets.reduce((acc, b) => acc + parseFloat(b.amount || 0), 0);
+  const totalSpent = budgets.reduce((acc, b) => acc + parseFloat(b.actual_expense || 0), 0);
+  const totalRemaining = totalBudget - totalSpent;
+  const overallUsage = totalBudget > 0 ? ((totalSpent / totalBudget) * 100).toFixed(1) : 0;
 
   const years = getYearOptions();
 
@@ -191,11 +185,11 @@ export const Budgets = () => {
       {/* Top Header */}
       <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
         <div>
-          <h2 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.02em', marginBottom: '4px' }}>
-            Budgets & Utilization
+          <h2 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.025em', marginBottom: '4px' }}>
+            Budget Planning & Thresholds
           </h2>
           <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
-            Set category-wise monthly limits and monitor live spending against your targets.
+            Set category limits, monitor utilization in real time, and prevent overspending.
           </p>
         </div>
 
@@ -204,7 +198,7 @@ export const Budgets = () => {
             className="form-select"
             value={selectedMonth}
             onChange={(e) => setSelectedMonth(Number(e.target.value))}
-            style={{ width: '130px', padding: '8px 12px' }}
+            style={{ width: '136px', padding: '9px 12px' }}
           >
             {MONTHS.map((m) => (
               <option key={m.value} value={m.value}>{m.label}</option>
@@ -215,7 +209,7 @@ export const Budgets = () => {
             className="form-select"
             value={selectedYear}
             onChange={(e) => setSelectedYear(Number(e.target.value))}
-            style={{ width: '100px', padding: '8px 12px' }}
+            style={{ width: '106px', padding: '9px 12px' }}
           >
             {years.map((y) => (
               <option key={y} value={y}>{y}</option>
@@ -229,28 +223,27 @@ export const Budgets = () => {
         </div>
       </div>
 
-      {/* Summary KPI Cards */}
+      {/* Overview KPI Cards */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
-        <div className="glass-card" style={{ padding: '18px 20px' }}>
-          <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: '4px' }}>Total Allocated Limit</div>
-          <div style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-primary)' }}>{formatCurrency(totalAllocated)}</div>
+        <div className="glass-card" style={{ padding: '18px 22px' }}>
+          <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: '6px' }}>Total Monthly Budget</div>
+          <div style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>{formatCurrency(totalBudget)}</div>
         </div>
-
-        <div className="glass-card" style={{ padding: '18px 20px' }}>
-          <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: '4px' }}>Actual Spending</div>
-          <div style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--rose)' }}>{formatCurrency(totalSpent)}</div>
+        <div className="glass-card" style={{ padding: '18px 22px' }}>
+          <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: '6px' }}>Actual Total Spent</div>
+          <div style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-rose)', letterSpacing: '-0.02em' }}>{formatCurrency(totalSpent)}</div>
         </div>
-
-        <div className="glass-card" style={{ padding: '18px 20px' }}>
-          <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: '4px' }}>Remaining Buffer</div>
-          <div style={{ fontSize: '1.5rem', fontWeight: 800, color: totalRemaining >= 0 ? 'var(--emerald)' : 'var(--rose)' }}>
+        <div className="glass-card" style={{ padding: '18px 22px' }}>
+          <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: '6px' }}>Remaining Available</div>
+          <div style={{ fontSize: '1.5rem', fontWeight: 800, color: totalRemaining >= 0 ? 'var(--text-emerald)' : 'var(--text-rose)', letterSpacing: '-0.02em' }}>
             {formatCurrency(totalRemaining)}
           </div>
         </div>
-
-        <div className="glass-card" style={{ padding: '18px 20px' }}>
-          <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: '4px' }}>Overall Utilization</div>
-          <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#38BDF8' }}>{overallUsagePct}%</div>
+        <div className="glass-card" style={{ padding: '18px 22px' }}>
+          <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: '6px' }}>Overall Utilization</div>
+          <div style={{ fontSize: '1.5rem', fontWeight: 800, color: overallUsage > 100 ? 'var(--text-rose)' : overallUsage >= 80 ? 'var(--text-amber)' : 'var(--text-emerald)', letterSpacing: '-0.02em' }}>
+            {overallUsage}%
+          </div>
         </div>
       </div>
 
@@ -264,10 +257,10 @@ export const Budgets = () => {
       ) : budgets.length === 0 ? (
         <div className="glass-card">
           <EmptyState
-            icon={PieChart}
+            icon={Layers}
             title="No budgets configured for this month"
-            description="Create category budgets to gain spending visibility and avoid exceeding limits."
-            actionText="Create Budget"
+            description="Create spending limits to track progress and receive automated warning alerts."
+            actionText="Set First Budget"
             onAction={handleOpenAdd}
           />
         </div>
@@ -275,21 +268,23 @@ export const Budgets = () => {
         <div className="grid-cols-3">
           {budgets.map((b) => {
             const isOver = b.usage_percentage > 100;
-            const isWarning = b.usage_percentage >= (parseFloat(b.alert_percentage) || 80) && !isOver;
+            const isWarning = b.usage_percentage >= parseFloat(b.alert_percentage || 80) && !isOver;
+            const remaining = parseFloat(b.remaining_amount || 0);
+
+            const statusColor = isOver ? 'var(--rose)' : isWarning ? 'var(--amber)' : 'var(--emerald)';
+            const statusBg = isOver ? 'var(--rose-bg)' : isWarning ? 'var(--amber-bg)' : 'var(--emerald-bg)';
+            const statusBorder = isOver ? 'var(--rose-border)' : isWarning ? 'var(--amber-border)' : 'var(--emerald-border)';
 
             return (
               <div
                 key={b.id}
-                className="glass-card"
+                className="glass-card glass-card-interactive"
                 style={{
                   padding: '22px',
                   display: 'flex',
                   flexDirection: 'column',
                   justifyContent: 'space-between',
                   gap: '16px',
-                  borderTop: `4px solid ${
-                    isOver ? 'var(--rose)' : isWarning ? 'var(--amber)' : 'var(--emerald)'
-                  }`,
                 }}
               >
                 <div>
@@ -297,22 +292,23 @@ export const Budgets = () => {
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                       <span
                         style={{
-                          width: '12px',
-                          height: '12px',
+                          width: '10px',
+                          height: '10px',
                           borderRadius: '50%',
-                          backgroundColor: b.category?.color || '#6366F1',
+                          backgroundColor: b.category.color || '#6366F1',
                         }}
                       />
-                      <h4 style={{ fontSize: '1.0625rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+                      <h3 style={{ fontSize: '1.0625rem', fontWeight: 800, color: 'var(--text-primary)' }}>
                         {b.category.name}
-                      </h4>
+                      </h3>
                     </div>
 
                     <span
                       className="badge"
                       style={{
-                        backgroundColor: isOver ? 'rgba(239, 68, 68, 0.15)' : isWarning ? 'rgba(245, 158, 11, 0.15)' : 'rgba(16, 185, 129, 0.15)',
-                        color: isOver ? '#F87171' : isWarning ? '#FBBF24' : '#34D399',
+                        color: statusColor,
+                        backgroundColor: statusBg,
+                        border: `1px solid ${statusBorder}`,
                       }}
                     >
                       {isOver ? <XCircle size={12} /> : isWarning ? <AlertTriangle size={12} /> : <CheckCircle2 size={12} />}
@@ -320,58 +316,65 @@ export const Budgets = () => {
                     </span>
                   </div>
 
-                  {/* Financials comparison */}
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                    <span style={{ fontSize: '0.8125rem', color: 'var(--text-muted)' }}>Spent</span>
-                    <span style={{ fontSize: '0.875rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '8px' }}>
+                    <div style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-primary)' }}>
                       {formatCurrency(b.actual_expense)}
-                    </span>
+                    </div>
+                    <div style={{ fontSize: '0.8125rem', color: 'var(--text-muted)' }}>
+                      Limit: <span style={{ fontWeight: 600, color: 'var(--text-secondary)' }}>{formatCurrency(b.amount)}</span>
+                    </div>
                   </div>
 
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '14px' }}>
-                    <span style={{ fontSize: '0.8125rem', color: 'var(--text-muted)' }}>Limit</span>
-                    <span style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-secondary)' }}>
-                      {formatCurrency(b.amount)}
-                    </span>
-                  </div>
-
-                  {/* Progress bar */}
-                  <div style={{ width: '100%', height: '8px', backgroundColor: '#0E1626', borderRadius: 'var(--radius-full)', overflow: 'hidden' }}>
+                  {/* Progress Meter */}
+                  <div
+                    style={{
+                      width: '100%',
+                      height: '8px',
+                      backgroundColor: 'rgba(255, 255, 255, 0.06)',
+                      borderRadius: 'var(--radius-full)',
+                      overflow: 'hidden',
+                      marginBottom: '10px',
+                      boxShadow: 'inset 0 1px 2px rgba(0, 0, 0, 0.3)',
+                    }}
+                  >
                     <div
                       style={{
                         height: '100%',
                         width: `${Math.min(b.usage_percentage, 100)}%`,
-                        backgroundColor: isOver ? 'var(--rose)' : isWarning ? 'var(--amber)' : 'var(--emerald)',
+                        backgroundColor: statusColor,
                         borderRadius: 'var(--radius-full)',
-                        transition: 'width 0.4s ease',
+                        boxShadow: `0 0 8px ${statusColor}60`,
+                        transition: 'width 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
                       }}
                     />
                   </div>
 
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '6px', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                    <span>{b.usage_percentage}% utilized</span>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                    <span>Utilization: <strong style={{ color: statusColor }}>{b.usage_percentage}%</strong></span>
                     <span>
-                      {parseFloat(b.remaining_amount) >= 0 ? `${formatCurrency(b.remaining_amount)} left` : `${formatCurrency(Math.abs(b.remaining_amount))} over`}
+                      {remaining >= 0 ? (
+                        <>Remaining: <strong style={{ color: 'var(--text-emerald)' }}>{formatCurrency(remaining)}</strong></>
+                      ) : (
+                        <>Exceeded by: <strong style={{ color: 'var(--text-rose)' }}>{formatCurrency(Math.abs(remaining))}</strong></>
+                      )}
                     </span>
                   </div>
                 </div>
 
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '8px', borderTop: '1px solid var(--border-subtle)', paddingTop: '12px' }}>
+                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', borderTop: '1px solid var(--border-glass)', paddingTop: '12px' }}>
                   <button
                     className="btn btn-outline"
-                    style={{ padding: '6px' }}
+                    style={{ padding: '4px 10px', fontSize: '0.75rem' }}
                     onClick={() => handleOpenEdit(b)}
-                    title="Edit Budget"
                   >
-                    <Edit2 size={14} />
+                    <Edit2 size={12} /> Edit Limit
                   </button>
                   <button
                     className="btn btn-danger"
-                    style={{ padding: '6px' }}
+                    style={{ padding: '4px 10px', fontSize: '0.75rem' }}
                     onClick={() => handleOpenDelete(b)}
-                    title="Delete Budget"
                   >
-                    <Trash2 size={14} />
+                    <Trash2 size={12} /> Remove
                   </button>
                 </div>
               </div>
@@ -383,89 +386,6 @@ export const Budgets = () => {
       {/* Add Budget Modal */}
       <Modal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} title="Set Category Budget">
         <form onSubmit={handleAddSubmit}>
-          <div className="form-group">
-            <label className="form-label">Expense Category *</label>
-            <select
-              className="form-select"
-              value={formData.category_id}
-              onChange={(e) => setFormData({ ...formData, category_id: e.target.value })}
-              required
-            >
-              {categories.map((c) => (
-                <option key={c.id} value={c.id}>{c.name}</option>
-              ))}
-            </select>
-          </div>
-
-          <div className="form-group">
-            <label className="form-label">Monthly Limit (INR) *</label>
-            <input
-              type="number"
-              step="0.01"
-              min="0.01"
-              className="form-input"
-              placeholder="5000.00"
-              value={formData.amount}
-              onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
-              required
-            />
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
-            <div className="form-group">
-              <label className="form-label">Month *</label>
-              <select
-                className="form-select"
-                value={formData.month}
-                onChange={(e) => setFormData({ ...formData, month: Number(e.target.value) })}
-              >
-                {MONTHS.map((m) => (
-                  <option key={m.value} value={m.value}>{m.label}</option>
-                ))}
-              </select>
-            </div>
-
-            <div className="form-group">
-              <label className="form-label">Year *</label>
-              <select
-                className="form-select"
-                value={formData.year}
-                onChange={(e) => setFormData({ ...formData, year: Number(e.target.value) })}
-              >
-                {years.map((y) => (
-                  <option key={y} value={y}>{y}</option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          <div className="form-group">
-            <label className="form-label">Alert Threshold (%)</label>
-            <input
-              type="number"
-              step="1"
-              min="1"
-              max="100"
-              className="form-input"
-              value={formData.alert_percentage}
-              onChange={(e) => setFormData({ ...formData, alert_percentage: e.target.value })}
-            />
-          </div>
-
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '20px' }}>
-            <button type="button" className="btn btn-secondary" onClick={() => setIsAddModalOpen(false)}>
-              Cancel
-            </button>
-            <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
-              {isSubmitting ? 'Saving...' : 'Set Budget'}
-            </button>
-          </div>
-        </form>
-      </Modal>
-
-      {/* Edit Budget Modal */}
-      <Modal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} title="Edit Budget Limit">
-        <form onSubmit={handleEditSubmit}>
           <div className="form-group">
             <label className="form-label">Category *</label>
             <select
@@ -487,6 +407,7 @@ export const Budgets = () => {
               step="0.01"
               min="0.01"
               className="form-input"
+              placeholder="15000.00"
               value={formData.amount}
               onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
               required
@@ -494,16 +415,71 @@ export const Budgets = () => {
           </div>
 
           <div className="form-group">
-            <label className="form-label">Alert Threshold (%)</label>
-            <input
-              type="number"
-              step="1"
-              min="1"
-              max="100"
-              className="form-input"
+            <label className="form-label">Alert Warning Threshold (%)</label>
+            <select
+              className="form-select"
               value={formData.alert_percentage}
               onChange={(e) => setFormData({ ...formData, alert_percentage: e.target.value })}
+            >
+              <option value="50.00">50% of budget</option>
+              <option value="75.00">75% of budget</option>
+              <option value="80.00">80% of budget (Recommended)</option>
+              <option value="90.00">90% of budget</option>
+              <option value="100.00">100% of budget</option>
+            </select>
+          </div>
+
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '20px' }}>
+            <button type="button" className="btn btn-secondary" onClick={() => setIsAddModalOpen(false)}>
+              Cancel
+            </button>
+            <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
+              {isSubmitting ? 'Saving...' : 'Set Budget'}
+            </button>
+          </div>
+        </form>
+      </Modal>
+
+      {/* Edit Budget Modal */}
+      <Modal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} title="Update Budget Limit">
+        <form onSubmit={handleEditSubmit}>
+          <div className="form-group">
+            <label className="form-label">Category</label>
+            <input
+              type="text"
+              className="form-input"
+              value={currentBudget?.category?.name || ''}
+              disabled
+              style={{ opacity: 0.7 }}
             />
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">Monthly Limit (INR) *</label>
+            <input
+              type="number"
+              step="0.01"
+              min="0.01"
+              className="form-input"
+              value={formData.amount}
+              onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">Alert Warning Threshold (%)</label>
+            <select
+              className="form-select"
+              value={formData.alert_percentage}
+              onChange={(e) => setFormData({ ...formData, alert_percentage: e.target.value })}
+            >
+              <option value="50.00">50% of budget</option>
+              <option value="75.00">75% of budget</option>
+              <option value="80.00">80% of budget (Recommended)</option>
+              <option value="90.00">90% of budget</option>
+              <option value="100.00">100% of budget</option>
+            </select>
           </div>
 
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '20px' }}>
@@ -517,13 +493,14 @@ export const Budgets = () => {
         </form>
       </Modal>
 
-      {/* Delete Budget Confirmation */}
+      {/* Delete Confirmation Modal */}
       <ConfirmModal
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
         onConfirm={handleDeleteConfirm}
-        title="Delete Budget Target"
-        message={`Are you sure you want to remove the budget for '${currentBudget?.category?.name}'?`}
+        title="Remove Category Budget"
+        message={`Are you sure you want to remove the ${selectedMonth}/${selectedYear} budget for "${currentBudget?.category?.name}"?`}
+        confirmText="Remove Budget"
         isLoading={isSubmitting}
       />
     </div>

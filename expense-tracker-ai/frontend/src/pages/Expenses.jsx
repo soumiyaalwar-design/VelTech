@@ -75,7 +75,6 @@ export const Expenses = () => {
       if (endDate) params.end_date = endDate;
 
       const data = await expenseService.getExpenses(params);
-      // Handle array or paginated results
       const list = Array.isArray(data) ? data : data?.results || [];
       setExpenses(list);
     } catch {
@@ -194,7 +193,7 @@ export const Expenses = () => {
       {/* Top Header */}
       <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
         <div>
-          <h2 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.02em', marginBottom: '4px' }}>
+          <h2 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.025em', marginBottom: '4px' }}>
             Expenses
           </h2>
           <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
@@ -210,39 +209,39 @@ export const Expenses = () => {
 
       {/* Summary KPI Mini Cards */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
-        <div className="glass-card" style={{ padding: '16px 20px' }}>
-          <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: '4px' }}>Total Filtered Spend</div>
-          <div style={{ fontSize: '1.375rem', fontWeight: 800, color: 'var(--rose)' }}>{formatCurrency(totalAmount)}</div>
+        <div className="glass-card" style={{ padding: '18px 22px' }}>
+          <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: '6px' }}>Total Filtered Spend</div>
+          <div style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-rose)', letterSpacing: '-0.02em' }}>{formatCurrency(totalAmount)}</div>
         </div>
-        <div className="glass-card" style={{ padding: '16px 20px' }}>
-          <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: '4px' }}>Transactions Count</div>
-          <div style={{ fontSize: '1.375rem', fontWeight: 800, color: 'var(--text-primary)' }}>{expenses.length}</div>
+        <div className="glass-card" style={{ padding: '18px 22px' }}>
+          <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: '6px' }}>Transactions Count</div>
+          <div style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>{expenses.length}</div>
         </div>
-        <div className="glass-card" style={{ padding: '16px 20px' }}>
-          <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: '4px' }}>Average Transaction</div>
-          <div style={{ fontSize: '1.375rem', fontWeight: 800, color: '#38BDF8' }}>{formatCurrency(avgAmount)}</div>
+        <div className="glass-card" style={{ padding: '18px 22px' }}>
+          <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: '6px' }}>Average Transaction</div>
+          <div style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-cyan)', letterSpacing: '-0.02em' }}>{formatCurrency(avgAmount)}</div>
         </div>
       </div>
 
       {/* Filter Toolbar */}
       <div className="glass-card" style={{ padding: '16px 20px', display: 'flex', flexWrap: 'wrap', gap: '12px', alignItems: 'center' }}>
-        <div style={{ flex: '1 1 200px', position: 'relative' }}>
+        <div style={{ flex: '1 1 220px', position: 'relative' }}>
           <input
             type="text"
             className="form-input"
             placeholder="Search description..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            style={{ paddingLeft: '36px' }}
+            style={{ paddingLeft: '38px' }}
           />
-          <Search size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+          <Search size={16} style={{ position: 'absolute', left: '13px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
         </div>
 
         <select
           className="form-select"
           value={selectedCategory}
           onChange={(e) => setSelectedCategory(e.target.value)}
-          style={{ flex: '1 1 150px' }}
+          style={{ flex: '1 1 160px' }}
         >
           <option value="">All Categories</option>
           {categories.map((c) => (
@@ -254,7 +253,7 @@ export const Expenses = () => {
           className="form-select"
           value={selectedPaymentMethod}
           onChange={(e) => setSelectedPaymentMethod(e.target.value)}
-          style={{ flex: '1 1 150px' }}
+          style={{ flex: '1 1 160px' }}
         >
           <option value="">All Payment Methods</option>
           <option value="CASH">Cash</option>
@@ -269,7 +268,7 @@ export const Expenses = () => {
           className="form-input"
           value={startDate}
           onChange={(e) => setStartDate(e.target.value)}
-          style={{ flex: '1 1 130px' }}
+          style={{ flex: '1 1 140px' }}
           placeholder="Start Date"
         />
 
@@ -278,7 +277,7 @@ export const Expenses = () => {
           className="form-input"
           value={endDate}
           onChange={(e) => setEndDate(e.target.value)}
-          style={{ flex: '1 1 130px' }}
+          style={{ flex: '1 1 140px' }}
           placeholder="End Date"
         />
       </div>
@@ -319,9 +318,9 @@ export const Expenses = () => {
                     <span
                       className="badge"
                       style={{
-                        backgroundColor: `${exp.category?.color || '#EF4444'}20`,
+                        backgroundColor: `${exp.category?.color || '#EF4444'}18`,
                         color: exp.category?.color || '#EF4444',
-                        border: `1px solid ${exp.category?.color || '#EF4444'}40`,
+                        border: `1px solid ${exp.category?.color || '#EF4444'}35`,
                       }}
                     >
                       <Tag size={12} />
@@ -335,24 +334,26 @@ export const Expenses = () => {
                       {exp.payment_method}
                     </span>
                   </td>
-                  <td style={{ fontWeight: 700, color: 'var(--rose)' }}>
-                    {formatCurrency(exp.amount)}
+                  <td style={{ fontWeight: 700, color: 'var(--text-rose)', letterSpacing: '-0.01em' }}>
+                    -{formatCurrency(exp.amount)}
                   </td>
                   <td style={{ textAlign: 'right' }}>
                     <div style={{ display: 'inline-flex', gap: '8px' }}>
                       <button
                         className="btn btn-outline"
-                        style={{ padding: '6px' }}
+                        style={{ padding: '6px 8px' }}
                         onClick={() => handleOpenEdit(exp)}
                         title="Edit Expense"
+                        aria-label="Edit Expense"
                       >
                         <Edit2 size={14} />
                       </button>
                       <button
                         className="btn btn-danger"
-                        style={{ padding: '6px' }}
+                        style={{ padding: '6px 8px' }}
                         onClick={() => handleOpenDelete(exp)}
                         title="Delete Expense"
+                        aria-label="Delete Expense"
                       >
                         <Trash2 size={14} />
                       </button>
@@ -451,7 +452,7 @@ export const Expenses = () => {
               Cancel
             </button>
             <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
-              {isSubmitting ? 'Saving...' : 'Save Expense'}
+              {isSubmitting ? 'Saving...' : 'Record Expense'}
             </button>
           </div>
         </form>
@@ -526,7 +527,7 @@ export const Expenses = () => {
           </div>
 
           <div className="form-group">
-            <label className="form-label">Notes</label>
+            <label className="form-label">Notes (Optional)</label>
             <textarea
               className="form-textarea"
               rows={2}
@@ -546,13 +547,14 @@ export const Expenses = () => {
         </form>
       </Modal>
 
-      {/* Delete Expense Confirmation */}
+      {/* Delete Confirmation Modal */}
       <ConfirmModal
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
         onConfirm={handleDeleteConfirm}
-        title="Delete Expense Entry"
-        message={`Are you sure you want to delete the expense of ${currentExpense ? formatCurrency(currentExpense.amount) : ''}?`}
+        title="Delete Expense Record"
+        message={`Are you sure you want to permanently delete the expense of ${formatCurrency(currentExpense?.amount || 0)} for "${currentExpense?.description || currentExpense?.category?.name}"?`}
+        confirmText="Delete Record"
         isLoading={isSubmitting}
       />
     </div>
