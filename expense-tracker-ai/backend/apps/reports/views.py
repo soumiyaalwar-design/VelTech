@@ -23,6 +23,21 @@ except ImportError:
     OPENPYXL_AVAILABLE = False
 
 
+def format_export_date(date_val):
+    """Format date to clean readable 'DD Mon YYYY' (e.g. 19 Aug 2026) for CSV & Excel."""
+    if not date_val:
+        return ""
+    if hasattr(date_val, 'strftime'):
+        return date_val.strftime('%d %b %Y')
+    if isinstance(date_val, str) and '-' in date_val:
+        try:
+            dt = datetime.strptime(date_val[:10], '%Y-%m-%d')
+            return dt.strftime('%d %b %Y')
+        except Exception:
+            return str(date_val)
+    return str(date_val)
+
+
 def get_filtered_transactions(user, params):
     """Helper to retrieve and filter combined expenses and incomes using one canonical source of truth."""
     month = params.get('month')
@@ -168,7 +183,7 @@ class ExportCSVView(APIView):
         writer.writerow(['Date', 'Type', 'Category', 'Description', 'Payment Method', 'Amount (INR)'])
 
         for r in records:
-            formatted_date = r['date'].strftime('%Y-%m-%d') if hasattr(r['date'], 'strftime') else str(r['date'])
+            formatted_date = format_export_date(r['date'])
             formatted_amount = f"-{r['amount']}" if r['type'] == 'EXPENSE' else str(r['amount'])
             writer.writerow([
                 formatted_date,
@@ -224,7 +239,7 @@ class ExportExcelView(APIView):
 
         # Write Data
         for row_idx, r in enumerate(records, start=2):
-            formatted_date = r['date'].strftime('%Y-%m-%d') if hasattr(r['date'], 'strftime') else str(r['date'])
+            formatted_date = format_export_date(r['date'])
             signed_amount = float(-r['amount'] if r['type'] == 'EXPENSE' else r['amount'])
 
             ws.append([
@@ -254,7 +269,7 @@ class ExportExcelView(APIView):
         for col in ws.columns:
             max_len = max(len(str(cell.value or '')) for cell in col)
             col_letter = get_column_letter(col[0].column)
-            ws.column_dimensions[col_letter].width = max(max_len + 4, 12)
+            ws.column_dimensions[col_letter].width = max(max_len + 5, 14)
 
         output = io.BytesIO()
         wb.save(output)
