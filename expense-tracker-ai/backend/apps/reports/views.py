@@ -24,31 +24,44 @@ except ImportError:
 
 
 def get_filtered_transactions(user, params):
-    """Helper to retrieve and filter combined expenses and incomes."""
+    """Helper to retrieve and filter combined expenses and incomes using one canonical source of truth."""
     month = params.get('month')
     year = params.get('year')
     start_date = params.get('start_date')
     end_date = params.get('end_date')
     category_id = params.get('category')
-    transaction_type = params.get('type', 'ALL').upper()
+    raw_type = params.get('type', '')
+
+    if not raw_type or str(raw_type).strip().upper() in ['ALL', '']:
+        transaction_type = 'ALL'
+    else:
+        transaction_type = str(raw_type).strip().upper()
 
     expenses_qs = Expense.objects.filter(user=user, is_deleted=False).select_related('category')
     incomes_qs = Income.objects.filter(user=user, is_deleted=False).select_related('category')
 
     # Apply date filters
-    if start_date:
+    if start_date and str(start_date).strip():
         expenses_qs = expenses_qs.filter(date__gte=start_date)
         incomes_qs = incomes_qs.filter(date__gte=start_date)
-    if end_date:
+    if end_date and str(end_date).strip():
         expenses_qs = expenses_qs.filter(date__lte=end_date)
         incomes_qs = incomes_qs.filter(date__lte=end_date)
-    if month:
-        expenses_qs = expenses_qs.filter(date__month=month)
-        incomes_qs = incomes_qs.filter(date__month=month)
-    if year:
-        expenses_qs = expenses_qs.filter(date__year=year)
-        incomes_qs = incomes_qs.filter(date__year=year)
-    if category_id:
+    if month and str(month).strip():
+        try:
+            m_int = int(month)
+            expenses_qs = expenses_qs.filter(date__month=m_int)
+            incomes_qs = incomes_qs.filter(date__month=m_int)
+        except (ValueError, TypeError):
+            pass
+    if year and str(year).strip():
+        try:
+            y_int = int(year)
+            expenses_qs = expenses_qs.filter(date__year=y_int)
+            incomes_qs = incomes_qs.filter(date__year=y_int)
+        except (ValueError, TypeError):
+            pass
+    if category_id and str(category_id).strip():
         expenses_qs = expenses_qs.filter(category_id=category_id)
         incomes_qs = incomes_qs.filter(category_id=category_id)
 
@@ -85,6 +98,7 @@ def get_filtered_transactions(user, params):
                 'created_at': inc.created_at
             })
 
+    # Sort descending by transaction date then created_at
     records.sort(key=lambda x: (x['date'], x['created_at']), reverse=True)
     return records
 
@@ -107,13 +121,14 @@ class ReportSummaryView(APIView):
 
         serialized_records = []
         for r in records:
+            formatted_date = r['date'].strftime('%Y-%m-%d') if hasattr(r['date'], 'strftime') else str(r['date'])
             serialized_records.append({
                 'id': r['id'],
                 'type': r['type'],
                 'category': r['category'],
                 'category_id': r['category_id'],
                 'amount': str(r['amount']),
-                'date': r['date'].strftime('%Y-%m-%d'),
+                'date': formatted_date,
                 'payment_method': r['payment_method'],
                 'description': r['description'],
                 'notes': r['notes']
@@ -124,7 +139,9 @@ class ReportSummaryView(APIView):
                 'total_income': str(total_income),
                 'total_expense': str(total_expense),
                 'net_balance': str(net_balance),
+                'net_savings': str(net_balance),
                 'count': len(records),
+                'transaction_count': len(records),
                 'transactions': serialized_records
             },
             message="Report summary generated successfully."
@@ -133,7 +150,7 @@ class ReportSummaryView(APIView):
 
 class ExportCSVView(APIView):
     """
-    Generates and streams a CSV export of filtered transactions.
+    Generates and streams a CSV export of filtered transactions with actual transaction dates.
     
     GET /api/reports/export/csv/
     """
@@ -143,22 +160,23 @@ class ExportCSVView(APIView):
     def get(self, request):
         records = get_filtered_transactions(request.user, request.query_params)
         
-        response = HttpResponse(content_type='text/csv')
+        response = HttpResponse(content_type='text/csv; charset=utf-8')
         filename = f"expense_tracker_export_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
         response['Content-Disposition'] = f'attachment; filename="{filename}"'
 
         writer = csv.writer(response)
-        writer.writerow(['Date', 'Type', 'Category', 'Amount (INR)', 'Payment Method', 'Description', 'Notes'])
+        writer.writerow(['Date', 'Type', 'Category', 'Description', 'Payment Method', 'Amount (INR)'])
 
         for r in records:
+            formatted_date = r['date'].strftime('%Y-%m-%d') if hasattr(r['date'], 'strftime') else str(r['date'])
+            formatted_amount = f"-{r['amount']}" if r['type'] == 'EXPENSE' else str(r['amount'])
             writer.writerow([
-                r['date'].strftime('%Y-%m-%d'),
+                formatted_date,
                 r['type'],
                 r['category'],
-                str(r['amount']),
-                r['payment_method'],
                 r['description'],
-                r['notes']
+                r['payment_method'],
+                formatted_amount
             ])
 
         return response
@@ -192,7 +210,7 @@ class ExportExcelView(APIView):
         border_side = Side(border_style="thin", color="E2E8F0")
         cell_border = Border(left=border_side, right=border_side, top=border_side, bottom=border_side)
 
-        headers = ['Date', 'Type', 'Category', 'Amount (INR)', 'Payment Method', 'Description', 'Notes']
+        headers = ['Date', 'Type', 'Category', 'Description', 'Payment Method', 'Amount (INR)']
         ws.append(headers)
 
         for col_num in range(1, len(headers) + 1):
@@ -206,14 +224,16 @@ class ExportExcelView(APIView):
 
         # Write Data
         for row_idx, r in enumerate(records, start=2):
+            formatted_date = r['date'].strftime('%Y-%m-%d') if hasattr(r['date'], 'strftime') else str(r['date'])
+            signed_amount = float(-r['amount'] if r['type'] == 'EXPENSE' else r['amount'])
+
             ws.append([
-                r['date'].strftime('%Y-%m-%d'),
+                formatted_date,
                 r['type'],
                 r['category'],
-                float(r['amount']),
-                r['payment_method'],
                 r['description'],
-                r['notes']
+                r['payment_method'],
+                signed_amount
             ])
             
             # Format type column color
@@ -222,8 +242,8 @@ class ExportExcelView(APIView):
             type_cell.alignment = Alignment(horizontal="center")
 
             # Format amount column
-            amount_cell = ws.cell(row=row_idx, column=4)
-            amount_cell.number_format = '₹#,##0.00'
+            amount_cell = ws.cell(row=row_idx, column=6)
+            amount_cell.number_format = '₹#,##0.00;[Red]-₹#,##0.00;₹0.00'
             amount_cell.alignment = Alignment(horizontal="right")
 
             # Border for all cells

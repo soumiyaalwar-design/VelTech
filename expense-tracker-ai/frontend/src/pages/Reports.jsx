@@ -107,6 +107,21 @@ export const Reports = () => {
 
   const years = getYearOptions();
 
+  // Dynamic calculations from the canonical filtered dataset
+  const totalIncome = parseFloat(reportData?.total_income || 0);
+  const totalExpense = parseFloat(reportData?.total_expense || 0);
+  const netSavings = reportData?.net_savings !== undefined
+    ? parseFloat(reportData.net_savings)
+    : (reportData?.net_balance !== undefined ? parseFloat(reportData.net_balance) : (totalIncome - totalExpense));
+  const transactionCount = reportData?.transaction_count !== undefined
+    ? reportData.transaction_count
+    : (reportData?.count !== undefined ? reportData.count : (reportData?.transactions?.length || 0));
+
+  const formatTransactionCount = (count) => {
+    if (count === 1) return '1 entry';
+    return `${count} entries`;
+  };
+
   return (
     <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
       {/* Top Header */}
@@ -126,7 +141,7 @@ export const Reports = () => {
             type="button"
             className="btn btn-secondary"
             onClick={handleExportCSV}
-            disabled={isExportingCSV}
+            disabled={isExportingCSV || isLoading}
           >
             <Download size={16} />
             {isExportingCSV ? 'Generating CSV...' : 'Export CSV'}
@@ -136,7 +151,7 @@ export const Reports = () => {
             type="button"
             className="btn btn-primary"
             onClick={handleExportExcel}
-            disabled={isExportingExcel}
+            disabled={isExportingExcel || isLoading}
           >
             <FileSpreadsheet size={16} />
             {isExportingExcel ? 'Generating Excel...' : 'Export Excel (.xlsx)'}
@@ -202,7 +217,7 @@ export const Reports = () => {
             <TrendingUp size={18} color="var(--emerald)" />
           </div>
           <div style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-emerald)', letterSpacing: '-0.02em' }}>
-            {formatCurrency(reportData?.total_income || 0)}
+            {formatCurrency(totalIncome)}
           </div>
         </div>
 
@@ -212,7 +227,7 @@ export const Reports = () => {
             <TrendingDown size={18} color="var(--rose)" />
           </div>
           <div style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-rose)', letterSpacing: '-0.02em' }}>
-            {formatCurrency(reportData?.total_expense || 0)}
+            {formatCurrency(totalExpense)}
           </div>
         </div>
 
@@ -225,11 +240,11 @@ export const Reports = () => {
             style={{
               fontSize: '1.5rem',
               fontWeight: 800,
-              color: Number(reportData?.net_savings || 0) >= 0 ? 'var(--text-emerald)' : 'var(--text-rose)',
+              color: netSavings > 0 ? 'var(--text-emerald)' : netSavings < 0 ? 'var(--text-rose)' : 'var(--text-secondary)',
               letterSpacing: '-0.02em',
             }}
           >
-            {formatCurrency(reportData?.net_savings || 0)}
+            {formatCurrency(netSavings)}
           </div>
         </div>
 
@@ -239,7 +254,7 @@ export const Reports = () => {
             <FileText size={18} color="var(--text-secondary)" />
           </div>
           <div style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>
-            {reportData?.transaction_count || 0} entries
+            {formatTransactionCount(transactionCount)}
           </div>
         </div>
       </div>
@@ -251,8 +266,8 @@ export const Reports = () => {
         <div className="glass-card">
           <EmptyState
             icon={FileSpreadsheet}
-            title="No report entries found"
-            description="Try modifying your month, year, type, or category filters."
+            title="No transactions found for the selected filters."
+            description="Try adjusting your month, year, transaction type, or category selection."
           />
         </div>
       ) : (
